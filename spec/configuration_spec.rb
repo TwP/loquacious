@@ -44,77 +44,108 @@ describe Loquacious::Configuration do
     @obj.__desc.should equal(h)
   end
 
-  it 'should merge the contents of another Configuration' do
-    other = Loquacious::Configuration.new  {
-              first   'foo', :desc => 'foo method'
-              second  'bar', :desc => 'bar method'
-            }
+  # -----------------------------------------------------------------------
+  describe 'when merging' do
 
-    @obj.first.should be_nil
-    @obj.second.should be_nil
-    @obj.__desc.should == {}
+    it 'should merge the contents of another Configuration' do
+      other = Loquacious::Configuration.new  {
+                first   'foo', :desc => 'foo method'
+                second  'bar', :desc => 'bar method'
+              }
 
-    @obj.merge! other
-    @obj.first.should == 'foo'
-    @obj.second.should == 'bar'
-    @obj.__desc.should == {
-      :first => 'foo method',
-      :second => 'bar method'
-    }
-  end
+      @obj.first.should be_nil
+      @obj.second.should be_nil
+      @obj.__desc.should == {}
 
-  it 'should recursively merge nested Configuration' do
-    other = Loquacious::Configuration.new  {
-      first   'foo', :desc => 'foo method'
-      second  'bar', :desc => 'bar method'
-
-      desc 'the third group'
-      third {
-        answer 42, :desc => 'life the universe and everything'
+      @obj.merge! other
+      @obj.first.should == 'foo'
+      @obj.second.should == 'bar'
+      @obj.__desc.should == {
+        :first => 'foo method',
+        :second => 'bar method'
       }
-    }
+    end
 
-    @obj = Loquacious::Configuration.new  {
-      third {
-        question '?', :desc => 'perhaps you do not understand'
+    it 'should recursively merge nested Configuration' do
+      other = Loquacious::Configuration.new  {
+        first   'foo', :desc => 'foo method'
+        second  'bar', :desc => 'bar method'
+
+        desc 'the third group'
+        third {
+          answer 42, :desc => 'life the universe and everything'
+        }
       }
-    }
 
-    @obj.merge! other
+      @obj = Loquacious::Configuration.new  {
+        third {
+          question '?', :desc => 'perhaps you do not understand'
+        }
+      }
 
-    @obj.first.should == 'foo'
-    @obj.second.should == 'bar'
-    @obj.third.question.should == '?'
-    @obj.third.answer.should == 42
+      @obj.merge! other
 
-    @obj.__desc.should == {
-      :first => 'foo method',
-      :second => 'bar method',
-      :third => 'the third group'
-    }
-    @obj.third.__desc.should == {
-      :question => 'perhaps you do not understand',
-      :answer => 'life the universe and everything'
-    }
+      @obj.first.should == 'foo'
+      @obj.second.should == 'bar'
+      @obj.third.question.should == '?'
+      @obj.third.answer.should == 42
+
+      @obj.__desc.should == {
+        :first => 'foo method',
+        :second => 'bar method',
+        :third => 'the third group'
+      }
+      @obj.third.__desc.should == {
+        :question => 'perhaps you do not understand',
+        :answer => 'life the universe and everything'
+      }
+    end
+
+    it 'should raise an error when merging with an unknown object' do
+      lambda {@obj.merge! 'foo'}.
+          should raise_error(Loquacious::Configuration::Error, "can only merge another Configuration")
+    end
   end
 
-  it 'should raise an error when merging with an unknown object' do
-    lambda {@obj.merge! 'foo'}.
-        should raise_error(Loquacious::Configuration::Error, "can only merge another Configuration")
-  end
+  # -----------------------------------------------------------------------
+  describe 'when working with descriptions' do
 
-  it 'should consume leading whitespace in descriptions' do
-    other = Loquacious::Configuration.new  {
-      desc <<-STR
-        This is the first thing we are defining in this config.
-        It has a multiline comment.
-      STR
-      first   'foo'
-      second  'bar', :desc => "bar method\n  also a multiline comment"
-    }
+    it 'should consume leading whitespace' do
+      other = Loquacious::Configuration.new  {
+        desc <<-STR
+          This is the first thing we are defining in this config.
+          It has a multiline comment.
+        STR
+        first   'foo'
+        second  'bar', :desc => "bar method\n  also a multiline comment"
+      }
 
-    other.__desc[:first].should == "This is the first thing we are defining in this config.\nIt has a multiline comment."
-    other.__desc[:second].should == "bar method\nalso a multiline comment"
+      other.__desc[:first].should == "This is the first thing we are defining in this config.\nIt has a multiline comment."
+      other.__desc[:second].should == "bar method\nalso a multiline comment"
+    end
+
+    it 'should leave whitespace after a gutter marker' do
+      other = Loquacious::Configuration.new  {
+        desc <<-STR
+        |  This is the first thing we are defining in this config.
+        |  It has a multiline comment.
+        STR
+        first   'foo'
+
+        desc <<-DESC
+          This is a short explanation
+
+          Example:
+          |  do this then that
+          |  followed by this line
+        DESC
+        second  'bar'
+      }
+
+      other.__desc[:first].should == "  This is the first thing we are defining in this config.\n  It has a multiline comment."
+      other.__desc[:second].should == "This is a short explanation\n\nExample:\n  do this then that\n  followed by this line"
+    end
+
   end
 end
 

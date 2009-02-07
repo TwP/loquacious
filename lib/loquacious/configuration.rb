@@ -128,7 +128,7 @@ module Loquacious
       def desc( str )
         str = str.to_s
         str.strip!
-        str.gsub! %r/^[\t\f\r ]+/, ''
+        str.gsub! %r/^[\t\f\r ]*\|?/, ''
         @description = str.empty? ? nil : str
       end
       alias :_ :desc
