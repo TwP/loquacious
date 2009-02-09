@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), %w[spec_helper])
 
 describe Loquacious do
   before(:all) do
-    @root_dir = File.path_from_here {'..'}
+    @root_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   end
 
   it "should report a version number" do
