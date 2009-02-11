@@ -23,9 +23,19 @@ module Loquacious
     # from this method. +nil+ is returned if there are no nodes in the
     # iterator.
     #
-    def each
+    def each( attribute = nil )
       reset
       rv = nil
+
+      if attribute and !attribute.empty?
+        node = while (n = next_node) do
+                 break n if n.name == attribute
+               end
+        rv = yield node
+        return rv unless node and node.config?
+        stack.clear
+        stack << new_frame(node.obj, node.name) if node.config?
+      end
 
       while (node = next_node) do
         rv = yield node

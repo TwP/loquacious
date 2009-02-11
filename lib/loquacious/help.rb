@@ -9,22 +9,22 @@ module Loquacious
     class Error < StandardError; end
     # :startdoc:
 
-    def initialize( cfg )
-      @cfg = cfg
+    def initialize( config )
+      @config = config
+      @iterator = Iterator.new config
     end
 
-    attr_reader :cfg
+    attr_reader :config, :iterator
 
     def describe( var = nil )
       var = case var
-        when nil; var
-        when String; var.split('.').map! {|x| x.to_sym}
-        when Array;  var.map! {|x| x.to_sym}
+        when String, nil; var
+        when Array;  var.join('.')
         else raise 'what again?' end
+      h = Hash.new
 
-      return describe_node(cfg, var) if var
-
-      describe_all cfg
+      iterator.each(var) {|n| h[n.name] = n.desc}
+      return h
     end
 
     private
