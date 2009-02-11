@@ -54,6 +54,20 @@ describe Loquacious::Iterator do
 
     ary.should == %w{first second third third.answer third.question}
   end
+
+  it 'should iterate over nested attributes if given' do
+    ary = Array.new
+    @iterator.each('third') {|n| ary << n.name}
+    ary.should == %w{third third.answer third.question}
+
+    ary.clear
+    @iterator.each('first') {|n| ary << n.name}
+    ary.should == %w{first}
+
+    ary.clear
+    @iterator.each('not_here') {|n| ary << n.name}
+    ary.should be_empty
+  end
 end
 
 # EOF

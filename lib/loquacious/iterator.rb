@@ -9,7 +9,7 @@ module Loquacious
     # :startdoc:
 
     # Create a new iterator that will operate on the _config_ (configuration
-    # objet). The iterator allows the attributes of the configuration object
+    # object). The iterator allows the attributes of the configuration object
     # to be accessed -- this includes nested configuration objects.
     #
     def initialize( config )
@@ -23,6 +23,10 @@ module Loquacious
     # from this method. +nil+ is returned if there are no nodes in the
     # iterator.
     #
+    # If an _attribute_ is given, then the iteration starts at that
+    # particular attribute and recurse if it is a nested configuration.
+    # Otherwise, only that attribute is yielded to the block.
+    #
     def each( attribute = nil )
       reset
       rv = nil
@@ -31,8 +35,11 @@ module Loquacious
         node = while (n = next_node) do
                  break n if n.name == attribute
                end
+        return if node.nil?
+
         rv = yield node
-        return rv unless node and node.config?
+        return rv unless node.config?
+
         stack.clear
         stack << new_frame(node.obj, node.name) if node.config?
       end
