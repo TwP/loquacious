@@ -38,7 +38,10 @@ module Loquacious
     # attribute could not be found.
     #
     def find( attribute )
-      node = self.each {|node| break node if node.name == attribute}
+      attribute = attribute.to_s
+      return if attribute.empty?
+
+      node = self.each {|n| break n if n.name == attribute}
       reset
       return node
     end
