@@ -1,6 +1,25 @@
 
 module Loquacious
 
+  # Provides an external iteraotr for Loquacious::Configuration object. The
+  # iterator allows the user to retrieve all the configuration settings
+  # along with their descriptions and values.
+  #
+  #   cfg = Configuration.for('foo') {
+  #     bar  'value', :desc => 'the bar attribute'
+  #     baz  42,      :desc => 'the baz attribute'
+  #   }
+  #
+  #   i = Iterator.new(cfg)
+  #   i.each do |node|
+  #     puts "#{node.name} :: #{node.desc}"
+  #   end
+  #
+  # Results in
+  #
+  #   bar :: the bar attribute
+  #   baz :: the baz attribute
+  #
   class Iterator
 
     # :stopdoc:

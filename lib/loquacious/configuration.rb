@@ -19,7 +19,7 @@ module Loquacious
           return @table.has_key?(name) ? @table[name] : nil
         end
 
-        cfg = DSL.evaluate &block
+        cfg = DSL.evaluate(&block)
 
         if @table.has_key? name
           @table[name].merge! cfg
@@ -30,14 +30,19 @@ module Loquacious
     end  # class << self
 
     exceptions = %w{object_id instance_of? kind_of? equal?}
+    exceptions.map! {|s| s.to_sym} if RUBY_1_9
     instance_methods.each do |m|
       undef_method m unless m[%r/^__/] or exceptions.include? m
     end
 
+    #
+    #
     def initialize( &block )
       self.merge!(DSL.evaluate(&block)) if block
     end
 
+    #
+    #
     def method_missing( method, *args, &block )
       m = method.to_s.delete('=').to_sym
 
@@ -64,6 +69,8 @@ module Loquacious
       self.__send__("#{m}", *args, &block)
     end
 
+    #
+    #
     def __eigenclass_eval( code )
       ec = class << self; self; end
       ec.module_eval code
@@ -71,14 +78,20 @@ module Loquacious
       raise Error, "cannot evalutate this code:\n#{code}\n"
     end
 
+    #
+    #
     def __desc
       @__desc ||= Hash.new
     end
 
+    #
+    #
     def []( sym )
       __desc.has_key?(sym) ? __desc[sym] : nil
     end
 
+    #
+    #
     def merge!( other )
       return self if other.equal? self
       raise Error, "can only merge another Configuration" unless other.kind_of?(Configuration)
@@ -96,6 +109,8 @@ module Loquacious
       self
     end
 
+    #
+    #
     class DSL
       alias :__instance_eval :instance_eval
 
@@ -103,16 +118,22 @@ module Loquacious
         undef_method m unless m[%r/^(__|object_id)/]
       end 
 
+      #
+      #
       def self.evaluate( &block )
         dsl = self.new(&block)
         dsl.__config
       end
 
+      #
+      #
       def initialize( &block )
         @description = nil
         self.__instance_eval(&block) if block
       end
 
+      #
+      #
       def method_missing( method, *args, &block )
         m = method.to_s.delete('=').to_sym
 
@@ -125,6 +146,8 @@ module Loquacious
         @description = nil
       end
 
+      #
+      #
       def desc( str )
         str = str.to_s
         str.strip!
@@ -133,6 +156,8 @@ module Loquacious
       end
       alias :_ :desc
 
+      #
+      #
       def __config
         @__config ||= Configuration.new
       end
