@@ -34,7 +34,7 @@ module Loquacious
     def initialize( config )
       @config = config
       @stack = []
-      reset
+      _reset
     end
 
     # Iterate over each node in the configuration object yielding each to
@@ -47,11 +47,11 @@ module Loquacious
     # Otherwise, only that attribute is yielded to the block.
     #
     def each( attribute = nil )
-      reset
+      _reset
       rv = nil
 
       if attribute and !attribute.empty?
-        node = while (n = next_node) do
+        node = while (n = _next_node) do
                  break n if n.name == attribute
                end
         return if node.nil?
@@ -60,10 +60,10 @@ module Loquacious
         return rv unless node.config?
 
         stack.clear
-        stack << new_frame(node.obj, node.name) if node.config?
+        stack << _new_frame(node.obj, node.name) if node.config?
       end
 
-      while (node = next_node) do
+      while (node = _next_node) do
         rv = yield node
       end
       return rv
@@ -78,7 +78,7 @@ module Loquacious
       return if attribute.empty?
 
       node = self.each {|n| break n if n.name == attribute}
-      reset
+      _reset
       return node
     end
 
@@ -86,27 +86,27 @@ module Loquacious
 
     # Reset the iterator back to the beginning.
     #
-    def reset
+    def _reset
       stack.clear
-      stack << new_frame(@config)
+      stack << _new_frame(@config)
     end
 
     # Returns the next node from the current iteration stack frame. Returns
     # +nil+ if there are no more nodes in the iterator.
     #
-    def next_node
+    def _next_node
       frame = stack.last
-      node = new_node(frame)
+      node = _new_node(frame)
 
       while node.nil?
         stack.pop
         return if stack.empty?
         frame = stack.last
-        node = new_node(frame)
+        node = _new_node(frame)
       end
 
       frame.index += 1
-      stack << new_frame(node.obj, node.name) if node.config?
+      stack << _new_frame(node.obj, node.name) if node.config?
 
       return node
     end
@@ -115,7 +115,7 @@ module Loquacious
     # and the optional _prefix_. The _prefix_ is used to complete the full
     # name for each attribute key in the configuration object.
     #
-    def new_frame( cfg, prefix = nil )
+    def _new_frame( cfg, prefix = nil )
       keys = cfg.__desc.keys.map {|k| k.to_s}
       keys.sort!
       keys.map! {|k| k.to_sym}
@@ -126,7 +126,7 @@ module Loquacious
     # Create the next iteration node from the given stack _frame_. Returns
     # +nil+ when there are no more nodes in the _frame_.
     #
-    def new_node( frame )
+    def _new_node( frame )
       key = frame.keys[frame.index]
       return if key.nil?
 
