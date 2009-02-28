@@ -109,7 +109,9 @@ module Loquacious
       self
     end
 
-    #
+    # Implementation of a doman specific language for creating configuration
+    # objects. Blocks of code are evaluted by the DSL which returns a new
+    # configuration object.
     #
     class DSL
       alias :__instance_eval :instance_eval
@@ -118,21 +120,26 @@ module Loquacious
         undef_method m unless m[%r/^(__|object_id)/]
       end 
 
-      #
+      # Create a new DSL and evaluate the given _block_ in the context of
+      # the DSL. Returns a newly created configuration object.
       #
       def self.evaluate( &block )
         dsl = self.new(&block)
         dsl.__config
       end
 
-      #
+      # Creates a new DSL and evaluates the given _block_ in the context of
+      # the DSL.
       #
       def initialize( &block )
         @description = nil
         self.__instance_eval(&block) if block
       end
 
-      #
+      # Dynamically adds the given _method_ to the configuration as an
+      # attribute. The _args_ will be used to set the value of the
+      # attribute. If a _block_ is given then the _args_ are ignored and the
+      # attribute will be a nested configuration object.
       #
       def method_missing( method, *args, &block )
         m = method.to_s.delete('=').to_sym
@@ -146,17 +153,19 @@ module Loquacious
         @description = nil
       end
 
+      # Store the _string_ as the description for the next attribute that
+      # will be configured. This description will be overwritten if the
+      # attribute has a description passed as an options hash.
       #
-      #
-      def desc( str )
-        str = str.to_s
-        str.strip!
-        str.gsub! %r/^[\t\f\r ]*\|?/, ''
-        @description = str.empty? ? nil : str
+      def desc( string )
+        string = string.to_s
+        string.strip!
+        string.gsub! %r/^[\t\f\r ]*\|?/, ''
+        @description = string.empty? ? nil : string
       end
       alias :_ :desc
 
-      #
+      # Returns the configuration object.
       #
       def __config
         @__config ||= Configuration.new
