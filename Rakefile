@@ -26,5 +26,6 @@ PROJ.version = Loquacious::VERSION
 PROJ.rubyforge.name = 'loquacious'
 
 PROJ.spec.opts << '--color'
+PROJ.ruby_opts = %w[-W0]
 
 # EOF
