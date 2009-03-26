@@ -23,7 +23,7 @@ module Loquacious
     def initialize( config, io = $stdout )
       @io = io
       config = config.kind_of?(::Loquacious::Configuration) ? config :
-               ::Loquacious::Configuration.for(config.to_s)
+               ::Loquacious::Configuration.for(config)
       @iterator = Iterator.new config
     end
 
