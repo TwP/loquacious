@@ -1,5 +1,5 @@
 
-module Loquacious
+class Loquacious::Configuration
 
   # Provides an external iteraotr for a Loquacious::Configuration object.
   # The iterator allows the user to retrieve all the configuration settings
@@ -145,8 +145,8 @@ module Loquacious
     #
     Node = Struct.new( :config, :name, :desc, :key ) {
       def obj() config.__send__(key); end
-      def config?() obj.kind_of? Configuration; end
+      def config?() obj.kind_of? ::Loquacious::Configuration; end
     }
 
   end  # class Iterator
-end  # module Loquacious
+end  # class Loquacious::Configuration

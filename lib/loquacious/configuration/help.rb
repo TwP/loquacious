@@ -2,7 +2,7 @@
 require 'pp'
 require 'stringio'
 
-module Loquacious
+class Loquacious::Configuration
 
   # Generate nicely formatted help messages for a configuration. The Help
   # class iterates over all the attributes in a configuration and outputs
@@ -186,6 +186,6 @@ class String
     str.insert(0, leader)
     str
   end
-end
+end  # class Loquacious::Configuration
 
 # EOF

@@ -9,13 +9,28 @@ module Loquacious
 
   class << self
 
+    # Returns the configuration associated with the given _name_. If a
+    # _block_ is given, then it will be used to create the configuration.
     #
+    # The same _name_ can be used multiple times with different
+    # configuration blocks. Each different block will be used to add to the
+    # configuration; i.e. the configurations are additive.
     #
     def configuration_for( name, &block )
-      Configuration.for name, &block
+      ::Loquacious::Configuration.for(name, &block)
     end
-    alias :config_for :configuration_for
-    alias :config     :configuration_for
+    alias :configuration :configuration_for
+    alias :config_for    :configuration_for
+    alias :config        :configuration_for
+
+    # Returns a Help instance for the configuration associated with the
+    # given _name_. See the Help#initialize method for the options that
+    # can be used with this method.
+    #
+    def help_for( name, opts = {} )
+      ::Loquacious::Configuration.help_for(name, opts)
+    end
+    alias :help :help_for
 
     # Returns the version string for the library.
     #

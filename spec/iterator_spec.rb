@@ -1,7 +1,7 @@
 
 require File.join(File.dirname(__FILE__), %w[spec_helper])
 
-describe Loquacious::Iterator do
+describe Loquacious::Configuration::Iterator do
   before(:all) do
     @config = Loquacious::Configuration.new  {
       first   'foo', :desc => 'foo method'
@@ -16,7 +16,7 @@ describe Loquacious::Iterator do
   end
 
   before(:each) do
-    @iterator = Loquacious::Iterator.new(@config)
+    @iterator = Loquacious::Configuration::Iterator.new(@config)
   end
 
   it 'should find a particular attribute' do

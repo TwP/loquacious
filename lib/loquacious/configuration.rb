@@ -10,29 +10,43 @@ module Loquacious
     @table = Hash.new
     # :startdoc:
 
-    # call-seq:
-    #    Configuration.for( name )
-    #    Configuration.for( name ) { block }
-    #
-    # Returns the configuration associated with the given _name_. If a
-    # _block_ is given, then it will be used to create the configuration.
-    #
-    # The same _name_ can be used multiple times with different
-    # configuration blocks. Each different block will be used to add to the
-    # configuration; i.e. the configurations are additive.
-    #
-    def self.for( name, &block )
-      if block.nil?
-        return @table.has_key?(name) ? @table[name] : nil
+    class << self
+      # call-seq:
+      #    Configuration.for( name )
+      #    Configuration.for( name ) { block }
+      #
+      # Returns the configuration associated with the given _name_. If a
+      # _block_ is given, then it will be used to create the configuration.
+      #
+      # The same _name_ can be used multiple times with different
+      # configuration blocks. Each different block will be used to add to the
+      # configuration; i.e. the configurations are additive.
+      #
+      def for( name, &block )
+        if block.nil?
+          return @table.has_key?(name) ? @table[name] : nil
+        end
+
+        cfg = DSL.evaluate(&block)
+
+        if @table.has_key? name
+          @table[name].merge! cfg
+        else
+          @table[name] = cfg
+        end
       end
 
-      cfg = DSL.evaluate(&block)
-
-      if @table.has_key? name
-        @table[name].merge! cfg
-      else
-        @table[name] = cfg
+      # call-seq:
+      #    Configuration.help_for( name, opts = {} )
+      #
+      # Returns a Help instance for the configuration associated with the
+      # given _name_. See the Help#initialize method for the options that
+      # can be used with this method.
+      #
+      def help_for( name, opts = {} )
+        ::Loquacious::Configuration::Help.new(name, opts)
       end
+      alias :help :help_for
     end
 
     exceptions = %w[object_id instance_of? kind_of? equal?]
