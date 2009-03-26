@@ -10,38 +10,48 @@ module Loquacious
     @table = Hash.new
     # :startdoc:
 
-    class << self
-
-      #
-      #
-      def for( name, &block )
-        if block.nil?
-          return @table.has_key?(name) ? @table[name] : nil
-        end
-
-        cfg = DSL.evaluate(&block)
-
-        if @table.has_key? name
-          @table[name].merge! cfg
-        else
-          @table[name] = cfg
-        end
+    # call-seq:
+    #    Configuration.for( name )
+    #    Configuration.for( name ) { block }
+    #
+    # Returns the configuration associated with the given _name_. If a
+    # _block_ is given, then it will be used to create the configuration.
+    #
+    # The same _name_ can be used multiple times with different
+    # configuration blocks. Each different block will be used to add to the
+    # configuration; i.e. the configurations are additive.
+    #
+    def self.for( name, &block )
+      if block.nil?
+        return @table.has_key?(name) ? @table[name] : nil
       end
-    end  # class << self
 
-    exceptions = %w{object_id instance_of? kind_of? equal?}
-    exceptions.map! {|s| s.to_sym} if RUBY_1_9
-    instance_methods.each do |m|
-      undef_method m unless m[%r/^__/] or exceptions.include? m
+      cfg = DSL.evaluate(&block)
+
+      if @table.has_key? name
+        @table[name].merge! cfg
+      else
+        @table[name] = cfg
+      end
     end
 
-    #
+    exceptions = %w[object_id instance_of? kind_of? equal?]
+    instance_methods.each do |m|
+      undef_method m unless m[%r/^__/] or exceptions.include? m.to_s
+    end
+
+    # Create a new configuration object and initialize it using an optional
+    # _block_ of code.
     #
     def initialize( &block )
       self.merge!(DSL.evaluate(&block)) if block
     end
 
-    #
+    # When invoked, an attribute reader and writer are defined for the
+    # _method_. Any arguments given are used to set the value of the
+    # attributes. If a _block_ is given, then the attribute is a nested
+    # configuration and the _block_ is evaluated in the context of a new
+    # configuration object.
     #
     def method_missing( method, *args, &block )
       m = method.to_s.delete('=').to_sym
@@ -69,7 +79,8 @@ module Loquacious
       self.__send__("#{m}", *args, &block)
     end
 
-    #
+    # Evaluate the given _code_ string in the context of this object's
+    # eigenclass (singleton class).
     #
     def __eigenclass_eval( code )
       ec = class << self; self; end
@@ -78,19 +89,25 @@ module Loquacious
       raise Error, "cannot evalutate this code:\n#{code}\n"
     end
 
-    #
+    # Accessor for the description hash.
     #
     def __desc
       @__desc ||= Hash.new
     end
 
+    # Returns the description associated with the attributed identified by
+    # the _symbol_.
     #
-    #
-    def []( sym )
-      __desc.has_key?(sym) ? __desc[sym] : nil
+    def []( symbol )
+      __desc.has_key?(symbol) ? __desc[symbol] : nil
     end
 
+    # Merge the contents of the _other_ configuration into this one. Values
+    # from the _other_ configuratin will overwite values in this
+    # configuration.
     #
+    # This function is recursive. Nested configurations will be merged with
+    # their counterparts in the _other_ configuration.
     #
     def merge!( other )
       return self if other.equal? self
@@ -163,14 +180,12 @@ module Loquacious
         string.gsub! %r/^[\t\f\r ]*\|?/, ''
         @description = string.empty? ? nil : string
       end
-      alias :_ :desc
 
       # Returns the configuration object.
       #
       def __config
         @__config ||= Configuration.new
       end
-
     end  # class DSL
 
   end  # class Configuration

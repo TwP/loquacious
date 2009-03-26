@@ -1,8 +1,8 @@
 
 module Loquacious
 
-  # Provides an external iteraotr for Loquacious::Configuration object. The
-  # iterator allows the user to retrieve all the configuration settings
+  # Provides an external iteraotr for a Loquacious::Configuration object.
+  # The iterator allows the user to retrieve all the configuration settings
   # along with their descriptions and values.
   #
   #   cfg = Configuration.for('foo') {

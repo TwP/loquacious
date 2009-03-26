@@ -5,7 +5,6 @@ module Loquacious
   VERSION = '1.0.0'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
-  RUBY_1_9 = !!(RUBY_VERSION =~ %r/^1\.9/)
   # :startdoc:
 
   class << self
