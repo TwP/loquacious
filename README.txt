@@ -1,32 +1,34 @@
-loquacious
-    by FIXME (your name)
-    FIXME (url)
-
-== DESCRIPTION:
-
-FIXME (describe your package)
-
-== FEATURES/PROBLEMS:
-
-* FIXME (list of features or problems)
+Loquacious
+    by Tim Pease
+    http://codeforpeople.rubyforge.org/loquacious
 
 == SYNOPSIS:
 
-  FIXME (code sample of usage)
+Descriptive configuration files for Ruby using Ruby.
 
-== REQUIREMENTS:
+== DESCRIPTION:
 
-* FIXME (list of requirements)
+You've written a great new piece of code that is configurable but comes with
+sensible defaults so that others can start using it quickly. Now it is time to
+document all those configuration options so your adoring fans can wield your
+code in anger.
+
+This is where Loquacious comes in -- a configuration system with baked in
+documentation and help. Loquacious allows you to describe your configuration
+options and use those descriptions to print pretty help messages.
 
 == INSTALL:
 
-* FIXME (sudo gem install, anything else)
+* sudo gem install loquacious
+
+== MANUAL:
+
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2008 FIXME (different license?)
+Copyright (c) 2009
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
