@@ -117,7 +117,7 @@ class Loquacious::Configuration
     def _print_node( node, show_description, show_value )
       desc = node.desc.to_s.dup
       show_description = false if desc.empty?
-      @io.puts(desc.indent @desc_leader) if show_description
+      @io.puts(desc.indent(@desc_leader)) if show_description
       @io.puts(_format_name(node, show_value))
       @io.puts if show_description
     end
