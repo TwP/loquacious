@@ -144,7 +144,7 @@ describe Loquacious::Configuration::Help do
     |  - third.question       => :symbol
     |
     OUTPUT
-    @help.show :value => true
+    @help.show :values => true
     @sio.to_s.should == str.gutter!
   end
 
@@ -156,7 +156,7 @@ describe Loquacious::Configuration::Help do
     |  - third.answer         => 42
     |  - third.question       => :symbol
     OUTPUT
-    @help.show_all :value => true, :description => false
+    @help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
   end
 
@@ -204,7 +204,7 @@ describe Loquacious::Configuration::Help do
     | ## third.answer         => 42
     | ## third.question       => :symbol
     OUTPUT
-    help.show_all :value => true, :description => false
+    help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
   end
 
@@ -238,7 +238,7 @@ describe Loquacious::Configuration::Help do
     |  - thir...wer => 42
     |  - thir...ion => :symbol
     OUTPUT
-    help.show_all :value => true, :description => false
+    help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
   end
 
@@ -261,7 +261,7 @@ describe Loquacious::Configuration::Help do
     |  - third.question       :: :symbol
     |
     OUTPUT
-    help.show_all :value => true
+    help.show_all :values => true
     @sio.to_s.should == str.gutter!
 
     @sio.clear
@@ -272,7 +272,7 @@ describe Loquacious::Configuration::Help do
     |  - third.answer         :: 42
     |  - third.question       :: :symbol
     OUTPUT
-    help.show_all :value => true, :description => false
+    help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
   end
 
@@ -315,7 +315,7 @@ describe Loquacious::Configuration::Help do
     |  - third.question       => :symbol
     |
     OUTPUT
-    help.show_all :value => true
+    help.show_all :values => true
     @sio.to_s.should == str.gutter!
   end
 end

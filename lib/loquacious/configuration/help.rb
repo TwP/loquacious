@@ -66,6 +66,8 @@ class Loquacious::Configuration
     # call-seq:
     #    show_attribute( name = nil, opts = {} )
     #
+    # TODO: finish comments and docos
+    #
     # show available attributes (with/without descriptions)
     # show current config
     # show everything
@@ -73,13 +75,13 @@ class Loquacious::Configuration
     def show_attribute( name = nil, opts = {} )
       name, opts = nil, name if name.is_a?(Hash)
       opts = {
-        :description => true,
-        :value => false
+        :descriptions => true,
+        :values => false
       }.merge!(opts)
 
       name = _normalize_attr(name)
-      show_description = opts[:description]
-      show_value = opts[:value]
+      show_description = opts[:descriptions]
+      show_value = opts[:values]
 
       Iterator.new(@config).each(name) do |node|
         _print_node(node, show_description, show_value)
