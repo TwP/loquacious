@@ -11,6 +11,49 @@ Spec::Runner.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
+
+  config.before :each do
+    table = Loquacious::Configuration.instance_variable_get(:@table)
+    table.clear
+
+    Loquacious.configuration_for('specs') do
+      first   'foo', :desc => 'foo method'
+      second  'bar', :desc => 'bar method'
+
+      desc 'the third group'
+      third {
+        answer 42, :desc => 'life the universe and everything'
+        question :symbol, :desc => 'perhaps you do not understand'
+      }
+    end
+  end
+end
+
+class StringIO
+  alias :_readline :readline
+  def readline
+    @pos ||= 0
+    seek @pos
+    line = _readline
+    @pos = tell
+    return line
+  rescue EOFError
+    nil
+  end
+
+  def clear
+    @pos = 0
+    seek 0
+    truncate 0
+  end
+
+  def to_s
+    @pos = tell
+    seek 0
+    str = read
+    seek @pos
+    return str
+  end
 end
 
 # EOF

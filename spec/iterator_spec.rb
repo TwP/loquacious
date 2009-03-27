@@ -2,20 +2,9 @@
 require File.join(File.dirname(__FILE__), %w[spec_helper])
 
 describe Loquacious::Configuration::Iterator do
-  before(:all) do
-    @config = Loquacious::Configuration.new  {
-      first   'foo', :desc => 'foo method'
-      second  'bar', :desc => 'bar method'
-
-      desc 'the third group'
-      third {
-        answer 42, :desc => 'life the universe and everything'
-        question :symbol, :desc => 'perhaps you do not understand'
-      }
-    }
-  end
 
   before(:each) do
+    @config = Loquacious.configuration_for 'specs'
     @iterator = Loquacious::Configuration::Iterator.new(@config)
   end
 

@@ -191,7 +191,7 @@ module Loquacious
       def desc( string )
         string = string.to_s
         string.strip!
-        string.gsub! %r/^[\t\f\r ]*\|?/, ''
+        string.gutter!
         @description = string.empty? ? nil : string
       end
 
