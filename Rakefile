@@ -21,11 +21,23 @@ task :default => 'spec:specdoc'
 PROJ.name = 'loquacious'
 PROJ.authors = 'Tim Pease'
 PROJ.email = 'tim.pease@gmail.com'
-PROJ.url = 'FIXME (project homepage)'
+PROJ.url = 'http://codeforpeople.rubyforge.org/loquacious'
 PROJ.version = Loquacious::VERSION
-PROJ.rubyforge.name = 'loquacious'
+PROJ.readme_file = 'README.rdoc'
+PROJ.ignore_file = '.gitignore'
+PROJ.rubyforge.name = 'codeforpeople'
 
 PROJ.spec.opts << '--color'
 PROJ.ruby_opts = %w[-W0]
+
+PROJ.ann.email[:server] = 'smtp.gmail.com'
+PROJ.ann.email[:port] = 587
+PROJ.ann.email[:from] = 'Tim Pease'
+
+task 'ann:prereqs' do
+  PROJ.name = 'Loquacious'
+end
+
+depend_on 'rspec'
 
 # EOF
