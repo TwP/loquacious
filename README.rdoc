@@ -2,11 +2,9 @@ Loquacious
     by Tim Pease
     http://codeforpeople.rubyforge.org/loquacious
 
-== SYNOPSIS:
+== DESCRIPTION:
 
 Descriptive configuration files for Ruby using Ruby.
-
-== DESCRIPTION:
 
 You've written a great new piece of code that is configurable but comes with
 sensible defaults so that others can start using it quickly. Now it is time to
@@ -21,7 +19,7 @@ options and use those descriptions to print pretty help messages.
 
 * sudo gem install loquacious
 
-== MANUAL:
+== INSTRUCTIONS:
 
 
 == LICENSE:

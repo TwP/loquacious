@@ -129,19 +129,19 @@ describe Loquacious::Configuration::Help do
   it "pretty prints values" do
     str = <<-OUTPUT
     | foo method
-    |  - first                => "foo"
+    |  - first          => "foo"
     |
     | bar method
-    |  - second               => "bar"
+    |  - second         => "bar"
     |
     | the third group
     |  - third
     |
     | life the universe and everything
-    |  - third.answer         => 42
+    |  - third.answer   => 42
     |
     | perhaps you do not understand
-    |  - third.question       => :symbol
+    |  - third.question => :symbol
     |
     OUTPUT
     @help.show :values => true
@@ -150,11 +150,11 @@ describe Loquacious::Configuration::Help do
 
   it "closely packs attributes when descriptions are omitted" do
     str = <<-OUTPUT
-    |  - first                => "foo"
-    |  - second               => "bar"
+    |  - first          => "foo"
+    |  - second         => "bar"
     |  - third
-    |  - third.answer         => 42
-    |  - third.question       => :symbol
+    |  - third.answer   => 42
+    |  - third.question => :symbol
     OUTPUT
     @help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
@@ -198,11 +198,11 @@ describe Loquacious::Configuration::Help do
 
     @sio.clear
     str = <<-OUTPUT
-    | ## first                => "foo"
-    | ## second               => "bar"
+    | ## first          => "foo"
+    | ## second         => "bar"
     | ## third
-    | ## third.answer         => 42
-    | ## third.question       => :symbol
+    | ## third.answer   => 42
+    | ## third.question => :symbol
     OUTPUT
     help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
@@ -246,19 +246,19 @@ describe Loquacious::Configuration::Help do
     help = Loquacious.help_for 'specs', :io => @sio, :name_value_sep => ' :: '
     str = <<-OUTPUT
     | foo method
-    |  - first                :: "foo"
+    |  - first          :: "foo"
     |
     | bar method
-    |  - second               :: "bar"
+    |  - second         :: "bar"
     |
     | the third group
     |  - third
     |
     | life the universe and everything
-    |  - third.answer         :: 42
+    |  - third.answer   :: 42
     |
     | perhaps you do not understand
-    |  - third.question       :: :symbol
+    |  - third.question :: :symbol
     |
     OUTPUT
     help.show_all :values => true
@@ -266,11 +266,11 @@ describe Loquacious::Configuration::Help do
 
     @sio.clear
     str = <<-OUTPUT
-    |  - first                :: "foo"
-    |  - second               :: "bar"
+    |  - first          :: "foo"
+    |  - second         :: "bar"
     |  - third
-    |  - third.answer         :: 42
-    |  - third.question       :: :symbol
+    |  - third.answer   :: 42
+    |  - third.question :: :symbol
     OUTPUT
     help.show_all :values => true, :descriptions => false
     @sio.to_s.should == str.gutter!
@@ -292,7 +292,7 @@ describe Loquacious::Configuration::Help do
     help = Loquacious.help_for 'specs', :io => @sio, :desc_leader => '~'
     str = <<-OUTPUT
     |~foo method
-    |  - first                => "foo"
+    |  - first          => "foo"
     |
     |~This is a multiline description that has an example.
     |~
@@ -300,19 +300,19 @@ describe Loquacious::Configuration::Help do
     |~
     |~See, the example is right above this line.
     |~Hope it was instructive.
-    |  - fourth               => "the fourth value"
+    |  - fourth         => "the fourth value"
     |
     |~bar method
-    |  - second               => "bar"
+    |  - second         => "bar"
     |
     |~the third group
     |  - third
     |
     |~life the universe and everything
-    |  - third.answer         => 42
+    |  - third.answer   => 42
     |
     |~perhaps you do not understand
-    |  - third.question       => :symbol
+    |  - third.question => :symbol
     |
     OUTPUT
     help.show_all :values => true

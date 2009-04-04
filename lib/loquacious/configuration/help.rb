@@ -16,7 +16,7 @@ class Loquacious::Configuration
     @@defaults = {
       :io => $stdout,
       :name_leader => '  - '.freeze,
-      :name_length => 20,
+      :name_length => 0,
       :name_value_sep => ' => '.freeze,
       :desc_leader => ' '.freeze
     }.freeze
@@ -44,8 +44,15 @@ class Loquacious::Configuration
                 ::Loquacious::Configuration.for(config)
 
       @io = opts[:io]
-      @name_length = opts[:name_length].to_i
+      @name_length = Integer(opts[:name_length])
       @desc_leader = opts[:desc_leader]
+
+      unless @name_length > 0
+        Iterator.new(@config).each do |node|
+          length = node.name.length
+          @name_length = length if length > @name_length
+        end
+      end
 
       name_leader = opts[:name_leader]
       name_value_sep = opts[:name_value_sep]
