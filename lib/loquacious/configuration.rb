@@ -131,6 +131,28 @@ module Loquacious
       self
     end
 
+    # Provides hash accessor notation for configuration values.
+    #
+    #   config = Configuration.for('app') {
+    #              port  1234
+    #            }
+    #   config[:port]  #=> 1234
+    #   config.port    #=> 1234
+    #
+    def []( key )
+      self.__send__(key)
+    end
+
+    # Provides hash accessor notation for configuration values.
+    #
+    #   config = Configuration.for('app')
+    #   config[:port] = 8808
+    #   config.port            #=> 8808
+    #
+    def []=( key, value )
+      self.__send__(key, value)
+    end
+
     # Implementation of a doman specific language for creating configuration
     # objects. Blocks of code are evaluted by the DSL which returns a new
     # configuration object.
@@ -170,8 +192,10 @@ module Loquacious
       def method_missing( method, *args, &block )
         m = method.to_s.delete('=').to_sym
 
-        opts = args.last.instance_of?(Hash) ? args.pop : {}
-        self.desc(opts[:desc]) if opts.has_key? :desc
+        if args.length > 1
+          opts = args.last.instance_of?(Hash) ? args.pop : {}
+          self.desc(opts[:desc]) if opts.has_key? :desc
+        end
 
         __config.__send__(m, *args, &block)
         __config.__desc[m] = @description

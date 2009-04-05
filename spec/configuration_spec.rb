@@ -44,6 +44,33 @@ describe Loquacious::Configuration do
     @obj.__desc.should equal(h)
   end
 
+  it 'should allow attributes to be assigned hash values' do
+    cfg = Loquacious::Configuration.new {
+            hash({:one => 1})
+          }
+    cfg.hash.should == {:one => 1}
+  end
+
+  it 'should provide hash accessor notation for attributes' do
+    cfg = Loquacious::Configuration.new {
+            one   1
+            two   2
+            three 3
+          }
+
+    cfg['one'].should == 1
+    cfg[:two].should == 2
+    cfg['three'].should == 3
+
+    cfg[:four].should be_nil
+    cfg.four = 4
+    cfg[:four].should == 4
+
+    cfg[:five] = 5
+    cfg.five.should == 5
+    cfg[:five].should == 5
+  end
+
   # -----------------------------------------------------------------------
   describe 'when merging' do
 

@@ -1,4 +1,11 @@
+== 1.1.0 / 2009-04-05
+
+* 1 minor enhancement
+  - Added hash accessor methods for configuration attributes
+* 1 bug fix
+  - Hash values were not being handeld properly by the DSL
+
 == 1.0.0 / 2009-04-04
 
 * 1 major enhancement
-  * Birthday!
+  - Birthday!
