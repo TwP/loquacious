@@ -86,12 +86,12 @@ class Loquacious::Configuration
         :values => false
       }.merge!(opts)
 
-      name = _normalize_attr(name)
+      name = normalize_attr(name)
       show_description = opts[:descriptions]
       show_value = opts[:values]
 
       Iterator.new(@config).each(name) do |node|
-        _print_node(node, show_description, show_value)
+        print_node(node, show_description, show_value)
       end
     end
     alias :show :show_attribute
@@ -106,7 +106,7 @@ class Loquacious::Configuration
 
     # Normalize the attribute _name_.
     #
-    def _normalize_attr( name )
+    def normalize_attr( name )
       case name
       when String, nil; name
       when Symbol; name.to_s
@@ -122,11 +122,11 @@ class Loquacious::Configuration
     # not by setting the _show_description_ flag to either +true+ or
     # +false+.
     #
-    def _print_node( node, show_description, show_value )
+    def print_node( node, show_description, show_value )
       desc = node.desc.to_s.dup
       show_description = false if desc.empty?
       @io.puts(desc.indent(@desc_leader)) if show_description
-      @io.puts(_format_name(node, show_value))
+      @io.puts(format_name(node, show_value))
       @io.puts if show_description
     end
 
@@ -134,7 +134,7 @@ class Loquacious::Configuration
     # the _show_value_ flag is set to +true+, then the attribute value will
     # also be included in the returned string.
     #
-    def _format_name( node, show_value )
+    def format_name( node, show_value )
       name = node.name.reduce @name_length
       return @name_format % name if node.config? or !show_value
 

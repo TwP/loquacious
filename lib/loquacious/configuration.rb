@@ -54,10 +54,14 @@ module Loquacious
       undef_method m unless m[%r/^__/] or exceptions.include? m.to_s
     end
 
+    # Accessor for the description hash.
+    attr_reader :__desc
+
     # Create a new configuration object and initialize it using an optional
     # _block_ of code.
     #
     def initialize( &block )
+      @__desc = Hash.new
       self.merge!(DSL.evaluate(&block)) if block
     end
 
@@ -103,19 +107,6 @@ module Loquacious
       raise Error, "cannot evalutate this code:\n#{code}\n"
     end
 
-    # Accessor for the description hash.
-    #
-    def __desc
-      @__desc ||= Hash.new
-    end
-
-    # Returns the description associated with the attributed identified by
-    # the _symbol_.
-    #
-    def []( symbol )
-      __desc.has_key?(symbol) ? __desc[symbol] : nil
-    end
-
     # Merge the contents of the _other_ configuration into this one. Values
     # from the _other_ configuratin will overwite values in this
     # configuration.
@@ -159,11 +150,15 @@ module Loquacious
         dsl.__config
       end
 
+      # Returns the configuration object.
+      attr_reader :__config
+
       # Creates a new DSL and evaluates the given _block_ in the context of
       # the DSL.
       #
       def initialize( &block )
         @description = nil
+        @__config = Configuration.new
         self.__instance_eval(&block) if block
       end
 
@@ -175,8 +170,8 @@ module Loquacious
       def method_missing( method, *args, &block )
         m = method.to_s.delete('=').to_sym
 
-        opts = Hash === args.last ? args.pop : {}
-        self.desc(opts[:desc]) if opts.has_key?(:desc)
+        opts = args.last.instance_of?(Hash) ? args.pop : {}
+        self.desc(opts[:desc]) if opts.has_key? :desc
 
         __config.__send__(m, *args, &block)
         __config.__desc[m] = @description
@@ -193,12 +188,6 @@ module Loquacious
         string.strip!
         string.gutter!
         @description = string.empty? ? nil : string
-      end
-
-      # Returns the configuration object.
-      #
-      def __config
-        @__config ||= Configuration.new
       end
     end  # class DSL
 
