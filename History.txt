@@ -1,3 +1,9 @@
+== 1.1.1 / 2009-04-05
+
+* 1 bug fix
+  - You can no longer use object_id as a configuration value
+    (Ruby 1.9 is very cranky if object_id gets undefined)
+
 == 1.1.0 / 2009-04-05
 
 * 1 minor enhancement

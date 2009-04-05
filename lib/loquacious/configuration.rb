@@ -49,7 +49,7 @@ module Loquacious
       alias :help :help_for
     end
 
-    exceptions = %w[instance_of? kind_of? equal?]
+    exceptions = %w[instance_of? kind_of? equal? object_id]
     instance_methods.each do |m|
       undef_method m unless m[%r/^__/] or exceptions.include? m.to_s
     end
@@ -161,7 +161,7 @@ module Loquacious
       alias :__instance_eval :instance_eval
 
       instance_methods.each do |m|
-        undef_method m unless m[%r/^__/]
+        undef_method m unless m[%r/^__/] or m.to_s == 'object_id'
       end 
 
       # Create a new DSL and evaluate the given _block_ in the context of
