@@ -26,6 +26,7 @@ PROJ.version = Loquacious::VERSION
 PROJ.readme_file = 'README.rdoc'
 PROJ.ignore_file = '.gitignore'
 PROJ.rubyforge.name = 'codeforpeople'
+PROJ.rdoc.remote_dir = 'loquacious'
 
 PROJ.spec.opts << '--color'
 PROJ.ruby_opts = %w[-W0]
