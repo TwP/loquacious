@@ -5,7 +5,7 @@
 require 'loquacious'
 include Loquacious
 
-Configuration.for 'simple' do
+Configuration.for(:simple) {
   desc 'Your first configuration option'
   a "value for 'a'"
 
@@ -14,7 +14,7 @@ Configuration.for 'simple' do
 
   desc 'The underpinings of Ruby'
   c 42
-end
+}
 
-help = Configuration.help_for 'simple'
+help = Configuration.help_for :simple
 help.show :values => true

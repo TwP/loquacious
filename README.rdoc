@@ -1,26 +1,212 @@
-Loquacious
+= Loquacious
     by Tim Pease
     http://codeforpeople.rubyforge.org/loquacious
 
 == DESCRIPTION:
 
-Descriptive configuration files for Ruby using Ruby.
+Descriptive configuration files for Ruby written in Ruby.
 
-You've written a great new piece of code that is configurable but comes with
-sensible defaults so that others can start using it quickly. Now it is time to
-document all those configuration options so your adoring fans can wield your
-code in anger.
+Loquacious provides a very open configuration system written in ruby and
+descriptions for each configuration attribute. The attributes and descriptions
+can be iterated over allowing for helpful information about those attributes to
+be displayed to the user.
 
-This is where Loquacious comes in -- a configuration system with baked in
-documentation and help. Loquacious allows you to describe your configuration
-options and use those descriptions to print pretty help messages.
+In the simple case we have a file something like
+
+  Loquacious.configuration_for('app') {
+    name 'value', :desc => "Defines the name"
+    foo  'bar',   :desc => "FooBar"
+    id   42,      :desc => "Ara T. Howard"
+  }
+
+Which can be loaded via the standard Ruby loading mechanisms
+
+  Kernel.load 'config/app.rb'
+
+The attributes and their descriptions can be printed by using a Help object
+
+  help = Loquacious.help_for('app')
+  help.show :values => true        # show the values for the attributes, too
+
+Descriptions are optional, and configurations can be nested arbitrarily deep.
+
+  Loquacious.configuration_for('nested') {
+    desc "The outermost level"
+    a {
+      desc "One more level in"
+      b {
+        desc "Finally, a real value"
+        c 'value'
+      }
+    }
+  }
+
+  config = Loquacious.configuration_for('nested')
+
+  p config.a.b.c  #=> "value"
+
+And as you can see, descriptions can either be given inline after the value or
+they can appear above the attribute and value on their own line.
 
 == INSTALL:
 
 * sudo gem install loquacious
 
-== INSTRUCTIONS:
+== EXAMPLES:
 
+==== example/simple.rb
+  # A simple example that configures three options (a b c) along with
+  # descriptions for each option. The descriptions along with the
+  # values for the configuration options are printed to the terminal.
+  
+  require 'loquacious'
+  include Loquacious
+  
+  Configuration.for(:simple) {
+    desc 'Your first configuration option'
+    a "value for 'a'"
+  
+    desc 'To be or not to be'
+    b "William Shakespeare"
+  
+    desc 'The underpinings of Ruby'
+    c 42
+  }
+  
+  help = Configuration.help_for :simple
+  help.show :values => true
+
+  ====== output ======
+   Your first configuration option
+    - a => "value for 'a'"
+  
+   To be or not to be
+    - b => "William Shakespeare"
+  
+   The underpinings of Ruby
+    - c => 42
+
+==== examples/nested.rb
+  # Here we show how to used nested configuration options by taking a subset
+  # of some common Rails configuration options. Also, descriptions can be give
+  # before the option or they can be given inline using Ruby hash notation. If
+  # both are present, then the inline description takes precedence.
+  #
+  # Multiline descriptions are provided using Ruby heredocs. Leading
+  # whitespace is stripped and line breaks are preserved when descriptions
+  # are printed using the help object.
+
+  require 'loquacious'
+  include Loquacious
+
+  Configuration.for(:nested) {
+    root_path '.', :desc => "The application's base directory."
+
+    desc "Configuration options for ActiveRecord::Base."
+    active_record {
+      desc <<-__
+        Determines whether to use ANSI codes to colorize the logging statements committed
+        by the connection adapter. These colors make it much easier to overview things
+        during debugging (when used through a reader like +tail+ and on a black background),
+        but may complicate matters if you use software like syslog. This is true, by default.
+      __
+      colorize_logging true
+
+      desc <<-__
+        Determines whether to use Time.local (using :local) or Time.utc (using :utc)
+        when pulling dates and times from the database. This is set to :local by default.
+      __
+      default_timezone :local
+    }
+
+    desc <<-__
+      The log level to use for the default Rails logger. In production mode,
+      this defaults to :info. In development mode, it defaults to :debug.
+    __
+    log_level :info
+
+    desc <<-__
+      The path to the log file to use. Defaults to log/\#{environment}.log
+      (e.g. log/development.log or log/production.log).
+    __
+    log_path 'log/development.log'
+  }
+
+  help = Configuration.help_for :nested
+  help.show :values => true
+
+  ====== output ======
+   Configuration options for ActiveRecord::Base.
+    - active_record
+   
+   Determines whether to use ANSI codes to colorize the logging statements committed
+   by the connection adapter. These colors make it much easier to overview things
+   during debugging (when used through a reader like +tail+ and on a black background),
+   but may complicate matters if you use software like syslog. This is true, by default.
+    - active_record.colorize_logging => true
+   
+   Determines whether to use Time.local (using :local) or Time.utc (using :utc)
+   when pulling dates and times from the database. This is set to :local by default.
+    - active_record.default_timezone => :local
+   
+   The log level to use for the default Rails logger. In production mode,
+   this defaults to :info. In development mode, it defaults to :debug.
+    - log_level                      => :info
+   
+   The path to the log file to use. Defaults to log/#{environment}.log
+   (e.g. log/development.log or log/production.log).
+    - log_path                       => "log/development.log"
+   
+   The application's base directory.
+    - root_path                      => "."
+
+==== examples/gutters.rb
+  # Using Ruby heredocs for descriptions, the Loquacious configuration will
+  # strip out leading whitespace but preserve line breaks. Gutter lines can be
+  # used to mark where leading whitespace should be preserved. This is useful
+  # is you need to provide example code in your descriptions.
+
+  require 'loquacious'
+  include Loquacious
+
+  Configuration.for(:gutters) {
+    desc <<-__
+      The path to the log file to use. Defaults to log/\#{environment}.log
+      (e.g. log/development.log or log/production.log).
+      |
+      |  config.log_path = File.join(ROOT, "log", "\#{environment}.log
+      |
+    __
+    log_path "log/development.log"
+
+    log_level :warn, :desc => <<-__
+      |The log level to use for the default Rails logger. In production mode,
+      |this defaults to :info. In development mode, it defaults to :debug.
+      |
+      |  config.log_level = 'debug'
+      |  config.log_level = :warn
+      |
+    __
+  }
+
+  help = Configuration.help_for :gutters
+  help.show :values => true
+
+  ====== output ======
+   The log level to use for the default Rails logger. In production mode,
+   this defaults to :info. In development mode, it defaults to :debug.
+   
+     config.log_level = 'debug'
+     config.log_level = :warn
+   
+    - log_level => :warn
+   
+   The path to the log file to use. Defaults to log/#{environment}.log
+   (e.g. log/development.log or log/production.log).
+   
+     config.log_path = File.join(ROOT, "log", "#{environment}.log
+   
+    - log_path  => "log/development.log"
 
 == LICENSE:
 

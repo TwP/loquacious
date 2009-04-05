@@ -10,7 +10,7 @@
 require 'loquacious'
 include Loquacious
 
-Configuration.for 'nested' do
+Configuration.for(:nested) {
   root_path '.', :desc => "The application's base directory."
 
   desc "Configuration options for ActiveRecord::Base."
@@ -41,7 +41,7 @@ Configuration.for 'nested' do
     (e.g. log/development.log or log/production.log).
   __
   log_path 'log/development.log'
-end
+}
 
-help = Configuration.help_for 'nested'
+help = Configuration.help_for :nested
 help.show :values => true
