@@ -73,11 +73,13 @@ class Loquacious::Configuration
     # call-seq:
     #    show_attribute( name = nil, opts = {} )
     #
-    # TODO: finish comments and docos
+    # Use this method to show the description for a single attribute or for
+    # all the attributes if no _name_ is given. The options allow you to
+    # show the values along with the attributes and to hide the descriptions
+    # (if all you want to see are the values).
     #
-    # show available attributes (with/without descriptions)
-    # show current config
-    # show everything
+    #    :descriptions => true to show descriptions and false to hide them
+    #    :values       => true to show values and false to hide them
     #
     def show_attribute( name = nil, opts = {} )
       name, opts = nil, name if name.is_a?(Hash)
@@ -86,11 +88,12 @@ class Loquacious::Configuration
         :values => false
       }.merge!(opts)
 
-      name = normalize_attr(name)
+      rgxp = Regexp.new(normalize_attr(name))
       show_description = opts[:descriptions]
       show_value = opts[:values]
 
-      Iterator.new(@config).each(name) do |node|
+      Iterator.new(@config).each do |node|
+        next unless rgxp =~ node.name
         print_node(node, show_description, show_value)
       end
     end
@@ -108,7 +111,7 @@ class Loquacious::Configuration
     #
     def normalize_attr( name )
       case name
-      when String, nil; name
+      when String, nil; name.to_s
       when Symbol; name.to_s
       when Array;  name.join('.')
       else
