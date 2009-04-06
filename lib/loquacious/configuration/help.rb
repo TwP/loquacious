@@ -18,7 +18,14 @@ class Loquacious::Configuration
       :name_leader => '  - '.freeze,
       :name_length => 0,
       :name_value_sep => ' => '.freeze,
-      :desc_leader => ' '.freeze
+      :desc_leader => ' '.freeze,
+      :colorize => false,
+      :colors => {
+        :name => :white,
+        :value => :cyan,
+        :description => :green,
+        :leader => :yellow
+      }.freeze
     }.freeze
 
     class Error < StandardError; end
@@ -34,6 +41,12 @@ class Loquacious::Configuration
     #   :name_value_sep   String separating the attribute name from the value
     #   :desc_leader      String appearing before the description
     #   :io               The IO object where help will be written
+    #   :colorize         Flag to colorize the output or not
+    #   :colors           Hash of colors for the name, value, description
+    #       :name           Name color
+    #       :value          Value color
+    #       :description    Description color
+    #       :leader         Leader and spacer color
     #
     # The description is printed before each attribute name and value on its
     # own line.
@@ -46,6 +59,8 @@ class Loquacious::Configuration
       @io = opts[:io]
       @name_length = Integer(opts[:name_length])
       @desc_leader = opts[:desc_leader]
+      @colorize = opts[:colorize]
+      @colors = opts[:colors]
 
       unless @name_length > 0
         Iterator.new(@config).each do |node|
@@ -64,10 +79,31 @@ class Loquacious::Configuration
       @format = "#{name_leader}%-#{@name_length}s#{name_value_sep}%s"
       @name_format = "#{name_leader}%s"
 
+      if colorize?
+        @desc_leader = self.__send__(@colors[:leader], @desc_leader)
+        name_leader = self.__send__(@colors[:leader], name_leader)
+        name_value_sep = self.__send__(@colors[:leader], name_value_sep)
+
+        @format = name_leader.dup
+        @format << self.__send__(@colors[:name], "%-#{@name_length}s")
+        @format << name_value_sep.dup
+        @format << self.__send__(@colors[:value], "%s")
+
+        @name_format = name_leader.dup
+        @name_format << self.__send__(@colors[:name], "%s")
+      end
+
       @desc_leader.freeze
       @value_leader.freeze
       @format.freeze
       @name_format.freeze
+    end
+
+    # Returns +true+ if the help instance is configured to colorize the
+    # output messages. Returns +false+ otherwise.
+    #
+    def colorize?
+      @colorize
     end
 
     # call-seq:
@@ -128,7 +164,15 @@ class Loquacious::Configuration
     def print_node( node, show_description, show_value )
       desc = node.desc.to_s.dup
       show_description = false if desc.empty?
-      @io.puts(desc.indent(@desc_leader)) if show_description
+
+      if show_description
+        if colorize?
+          desc = desc.gsub(%r/([^\n]+)/,
+                           self.__send__(@colors[:description], '\1'))
+        end
+        @io.puts(desc.indent(@desc_leader))
+      end
+
       @io.puts(format_name(node, show_value))
       @io.puts if show_description
     end
@@ -146,6 +190,42 @@ class Loquacious::Configuration
       sio.seek 0
       obj = sio.read.chomp.gsub("\n", @value_leader)
       @format % [name, obj]
+    end
+
+    [ [ :clear        ,   0 ],
+      [ :reset        ,   0 ],     # synonym for :clear
+      [ :bold         ,   1 ],
+      [ :dark         ,   2 ],
+      [ :italic       ,   3 ],     # not widely implemented
+      [ :underline    ,   4 ],
+      [ :underscore   ,   4 ],     # synonym for :underline
+      [ :blink        ,   5 ],
+      [ :rapid_blink  ,   6 ],     # not widely implemented
+      [ :negative     ,   7 ],     # no reverse because of String#reverse
+      [ :concealed    ,   8 ],
+      [ :strikethrough,   9 ],     # not widely implemented
+      [ :black        ,  30 ],
+      [ :red          ,  31 ],
+      [ :green        ,  32 ],
+      [ :yellow       ,  33 ],
+      [ :blue         ,  34 ],
+      [ :magenta      ,  35 ],
+      [ :cyan         ,  36 ],
+      [ :white        ,  37 ],
+      [ :on_black     ,  40 ],
+      [ :on_red       ,  41 ],
+      [ :on_green     ,  42 ],
+      [ :on_yellow    ,  43 ],
+      [ :on_blue      ,  44 ],
+      [ :on_magenta   ,  45 ],
+      [ :on_cyan      ,  46 ],
+      [ :on_white     ,  47 ] ].each do |name,code|
+
+      class_eval <<-CODE
+        def #{name.to_s}( str )
+          "\e[#{code}m\#{str}\e[0m"
+        end
+      CODE
     end
 
   end  # class Help
