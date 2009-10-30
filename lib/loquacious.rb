@@ -2,7 +2,7 @@
 module Loquacious
 
   # :stopdoc:
-  VERSION = '1.3.0'
+  VERSION = '1.3.1'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
@@ -65,6 +65,27 @@ module Loquacious
           ::File.join(::File.dirname(fname), dir, '**', '*.rb'))
 
       Dir.glob(search_me).sort.each {|rb| require rb}
+    end
+
+    # This is merely a convenience method to remove methods from the
+    # Loquacious::Configuration class. Some ruby gems add lots of crap to the
+    # Kernel module, and this interferes with the configuration system. The
+    # remove method should be used to anihilate unwanted methods from the
+    # configuration class as needed.
+    #
+    #   Loquacious.remove :gem           # courtesy of rubygems
+    #   Loquacious.remove :test, :file   # courtesy of rake
+    #
+    def remove( *args )
+      args.each { |name|
+        name = name.to_s.delete('=')
+        code = <<-__
+          undef_method :#{name} rescue nil
+          undef_method :#{name}= rescue nil
+        __
+        Loquacious::Configuration.module_eval code
+        Loquacious::Configuration::DSL.module_eval code
+      }
     end
 
   end  # class << self

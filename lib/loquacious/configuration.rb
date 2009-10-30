@@ -80,7 +80,7 @@ module Loquacious
           v = (1 == args.length ? args.first : args)
           v = nil if args.empty?
           v = DSL.evaluate(&block) if block
-          
+
           return @#{m} unless v
 
           if @#{m}.kind_of?(Configuration)
@@ -162,7 +162,7 @@ module Loquacious
 
       instance_methods.each do |m|
         undef_method m unless m[%r/^__/] or m.to_s == 'object_id'
-      end 
+      end
 
       # Create a new DSL and evaluate the given _block_ in the context of
       # the DSL. Returns a newly created configuration object.
