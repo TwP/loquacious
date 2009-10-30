@@ -81,7 +81,7 @@ module Loquacious
           v = nil if args.empty?
           v = DSL.evaluate(&block) if block
 
-          return @#{m} unless v
+          return @#{m} unless v or v == false
 
           if @#{m}.kind_of?(Configuration)
             @#{m}.merge! v
