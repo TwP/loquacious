@@ -2,7 +2,7 @@
 module Loquacious
 
   # :stopdoc:
-  VERSION = '1.3.1'
+  VERSION = '1.4.0'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:

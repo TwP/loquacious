@@ -99,6 +99,42 @@ describe Loquacious::Configuration::Help do
     @sio.to_s.should == str.gutter!
   end
 
+  it "hides nesting attributes" do
+    help = Loquacious::Configuration::Help.new @config, :nesting_nodes => false, :io => @sio
+
+    str = <<-OUTPUT
+    | foo method
+    |  - first
+    |
+    | bar method
+    |  - second
+    |
+    | life the universe and everything
+    |  - third.answer
+    |
+    | perhaps you do not understand
+    |  - third.question
+    |
+    OUTPUT
+
+    help.show_all
+    @sio.to_s.should == str.gutter!
+
+    @sio.clear
+    str = <<-OUTPUT
+    | life the universe and everything
+    |  - third.answer
+    |
+    | perhaps you do not understand
+    |  - third.question
+    |
+    OUTPUT
+    help.show_attribute 'third'
+    @sio.to_s.should == str.gutter!
+
+    @sio.clear
+  end
+
   it "preserves indentation for descriptions" do
     Loquacious.configuration_for('specs') do
       desc <<-DESC

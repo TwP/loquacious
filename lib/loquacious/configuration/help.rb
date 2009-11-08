@@ -19,6 +19,7 @@ class Loquacious::Configuration
       :name_length => 0,
       :name_value_sep => ' => '.freeze,
       :desc_leader => ' '.freeze,
+      :nesting_nodes => true,
       :colorize => false,
       :colors => {
         :name => :white,
@@ -41,6 +42,9 @@ class Loquacious::Configuration
     #   :name_value_sep   String separating the attribute name from the value
     #   :desc_leader      String appearing before the description
     #   :io               The IO object where help will be written
+    #   :nesting_nodes    Flag to enable or disable output of nesting nodes
+    #                     (this does not affect display of attributes
+    #                     contained by the nesting nodes)
     #   :colorize         Flag to colorize the output or not
     #   :colors           Hash of colors for the name, value, description
     #       :name           Name color
@@ -59,6 +63,7 @@ class Loquacious::Configuration
       @io = opts[:io]
       @name_length = Integer(opts[:name_length])
       @desc_leader = opts[:desc_leader]
+      @nesting_nodes = opts[:nesting_nodes]
       @colorize = opts[:colorize]
       @colors = opts[:colors]
 
@@ -106,6 +111,15 @@ class Loquacious::Configuration
       @colorize
     end
 
+    # Returns +true+ if the help instance is configured to show nesting
+    # configuration nodes when iterating over the attributes. This only
+    # prevents the nesting node name from being displayed. The attributes
+    # nested under the node are still displayed regardless of this setting.
+    #
+    def show_nesting_nodes?
+      @nesting_nodes
+    end
+
     # call-seq:
     #    show_attribute( name = nil, opts = {} )
     #
@@ -130,6 +144,7 @@ class Loquacious::Configuration
 
       Iterator.new(@config).each do |node|
         next unless rgxp =~ node.name
+        next if !show_nesting_nodes? and node.config?
         print_node(node, show_description, show_value)
       end
     end

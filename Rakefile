@@ -1,44 +1,36 @@
-# Look in the tasks/setup.rb file for the various options that can be
-# configured in this Rakefile. The .rake files in the tasks directory
-# are where the options are used.
 
 begin
   require 'bones'
-  Bones.setup
 rescue LoadError
-  begin
-    load 'tasks/setup.rb'
-  rescue LoadError
-    raise RuntimeError, '### please install the "bones" gem ###'
-  end
+  abort '### please install the "bones" gem ###'
 end
 
 ensure_in_path 'lib'
 require 'loquacious'
 
+Bones {
+  name         'loquacious'
+  authors      'Tim Pease'
+  email        'tim.pease@gmail.com'
+  url          'http://gemcutter.org/gems/loquacious'
+  version      Loquacious::VERSION
+  readme_file  'README.rdoc'
+  ignore_file  '.gitignore'
+  ruby_opts    %w[-W0]
+  spec.opts << '--color'
+
+  depend_on 'rspec',        :development => true
+  depend_on 'bones-git',    :development => true
+  depend_on 'bones-extras', :development => true
+
+  use_gmail
+  enable_sudo
+}
+
+
 task :default => 'spec:specdoc'
 
-PROJ.name = 'loquacious'
-PROJ.authors = 'Tim Pease'
-PROJ.email = 'tim.pease@gmail.com'
-PROJ.url = 'http://codeforpeople.rubyforge.org/loquacious'
-PROJ.version = Loquacious::VERSION
-PROJ.readme_file = 'README.rdoc'
-PROJ.ignore_file = '.gitignore'
-PROJ.rubyforge.name = 'codeforpeople'
-PROJ.rdoc.remote_dir = 'loquacious'
-
-PROJ.spec.opts << '--color'
-PROJ.ruby_opts = %w[-W0]
-
-PROJ.ann.email[:server] = 'smtp.gmail.com'
-PROJ.ann.email[:port] = 587
-PROJ.ann.email[:from] = 'Tim Pease'
-
 task 'ann:prereqs' do
-  PROJ.name = 'Loquacious'
+  Bones.config.name = 'Loquacious'
 end
 
-depend_on 'rspec'
-
-# EOF
