@@ -8,6 +8,9 @@ end
 ensure_in_path 'lib'
 require 'loquacious'
 
+task :default => 'spec:specdoc'
+task 'gem:release' => 'spec:run'
+
 Bones {
   name         'loquacious'
   authors      'Tim Pease'
@@ -27,8 +30,6 @@ Bones {
   enable_sudo
 }
 
-
-task :default => 'spec:specdoc'
 
 task 'ann:prereqs' do
   Bones.config.name = 'Loquacious'
