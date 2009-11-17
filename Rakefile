@@ -21,6 +21,7 @@ Bones {
   ignore_file  '.gitignore'
   ruby_opts    %w[-W0]
   spec.opts << '--color'
+  rubyforge.name 'codeforpeople'
 
   depend_on 'rspec',        :development => true
   depend_on 'bones-git',    :development => true
