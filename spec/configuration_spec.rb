@@ -71,6 +71,25 @@ describe Loquacious::Configuration do
     cfg[:five].should == 5
   end
 
+  it 'should allow Kernel methods to be treated as configuration attributes' do
+    cfg = Loquacious::Configuration.new {
+            fork   'spoon knife spork'
+            split  'join'
+            raise  'double down'
+            puts   'not what you think'
+          }
+
+    cfg['fork'].should == 'spoon knife spork'
+    cfg['split'].should == 'join'
+    cfg['raise'].should == 'double down'
+    cfg['puts'].should == 'not what you think'
+
+    cfg[:fork].should == 'spoon knife spork'
+    cfg[:split].should == 'join'
+    cfg[:raise].should == 'double down'
+    cfg[:puts].should == 'not what you think'
+  end
+
   # -----------------------------------------------------------------------
   describe 'when merging' do
 
