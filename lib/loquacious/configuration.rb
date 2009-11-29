@@ -49,9 +49,18 @@ module Loquacious
       alias :help :help_for
     end
 
-    exceptions = %w[instance_of? kind_of? equal? object_id]
+    Keepers = %r/^__|^object_id$|^instance_of\?$|^kind_of\?$|^equal\?$/
     instance_methods.each do |m|
-      undef_method m unless m[%r/^__/] or exceptions.include? m.to_s
+      next if m[Keepers]
+      undef_method m
+    end
+    Kernel.methods.each do |m|
+      next if m[Keepers]
+      module_eval <<-CODE
+        def #{m}( *args, &block )
+          self.method_missing('#{m}', *args, &block)
+        end
+      CODE
     end
 
     # Accessor for the description hash.
@@ -104,7 +113,7 @@ module Loquacious
       ec = class << self; self; end
       ec.module_eval code
     rescue StandardError
-      raise Error, "cannot evalutate this code:\n#{code}\n"
+      Kernel.raise Error, "cannot evalutate this code:\n#{code}\n"
     end
 
     # Merge the contents of the _other_ configuration into this one. Values
@@ -116,7 +125,7 @@ module Loquacious
     #
     def merge!( other )
       return self if other.equal? self
-      raise Error, "can only merge another Configuration" unless other.kind_of?(Configuration)
+      Kernel.raise Error, "can only merge another Configuration" unless other.kind_of?(Configuration)
 
       other.__desc.each do |key,desc|
         value = other.__send__(key)
@@ -158,11 +167,19 @@ module Loquacious
     # configuration object.
     #
     class DSL
-      keepers = %w[instance_eval object_id]
+      Keepers = %r/^__|^object_id$/
       instance_methods.each do |m|
-        undef_method m unless m[%r/^__/] or keepers.include? m.to_s
+        next if m[Keepers]
+        undef_method m
       end
-      private :instance_eval
+      Kernel.methods.each do |m|
+        next if m[Keepers]
+        module_eval <<-CODE
+          def #{m}( *args, &block )
+            self.method_missing('#{m}', *args, &block)
+          end
+        CODE
+      end
 
       # Create a new DSL and evaluate the given _block_ in the context of
       # the DSL. Returns a newly created configuration object.
@@ -181,7 +198,8 @@ module Loquacious
       def initialize( &block )
         @description = nil
         @__config = Configuration.new
-        self.__send__(:instance_eval, &block) if block
+        Object.instance_method(:instance_eval).bind(self).
+            call(&block) if block
       end
 
       # Dynamically adds the given _method_ to the configuration as an
