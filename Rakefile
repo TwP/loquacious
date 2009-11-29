@@ -19,7 +19,7 @@ Bones {
   version      Loquacious::VERSION
   readme_file  'README.rdoc'
   ignore_file  '.gitignore'
-  ruby_opts    %w[-W0]
+#  ruby_opts    %w[-W0]
   spec.opts << '--color'
   rubyforge.name 'codeforpeople'
 

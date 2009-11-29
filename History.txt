@@ -1,3 +1,8 @@
+== 1.4.1 / 2009-11-29
+
+* 1 bug fix
+  - Fixing warning message from jRuby
+
 == 1.4.0 / 2009-11-07
 
 * 2 minor enhancement

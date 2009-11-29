@@ -158,11 +158,11 @@ module Loquacious
     # configuration object.
     #
     class DSL
-      alias :__instance_eval :instance_eval
-
+      keepers = %w[instance_eval object_id]
       instance_methods.each do |m|
-        undef_method m unless m[%r/^__/] or m.to_s == 'object_id'
+        undef_method m unless m[%r/^__/] or keepers.include? m.to_s
       end
+      private :instance_eval
 
       # Create a new DSL and evaluate the given _block_ in the context of
       # the DSL. Returns a newly created configuration object.
@@ -181,7 +181,7 @@ module Loquacious
       def initialize( &block )
         @description = nil
         @__config = Configuration.new
-        self.__instance_eval(&block) if block
+        self.__send__(:instance_eval, &block) if block
       end
 
       # Dynamically adds the given _method_ to the configuration as an
