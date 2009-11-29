@@ -1,7 +1,8 @@
 == 1.4.1 / 2009-11-29
 
-* 1 bug fix
+* 2 bug fixes
   - Fixing warning message from jRuby
+  - Kernel methods can now be used as configuration attributes
 
 == 1.4.0 / 2009-11-07
 
