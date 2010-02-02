@@ -19,20 +19,18 @@ Bones {
   version      Loquacious::VERSION
   readme_file  'README.rdoc'
   ignore_file  '.gitignore'
-#  ruby_opts    %w[-W0]
   spec.opts << '--color'
   rubyforge.name 'codeforpeople'
-
-  depend_on 'rspec',        :development => true
-  depend_on 'bones-git',    :development => true
-  depend_on 'bones-extras', :development => true
-
   use_gmail
-  enable_sudo
-}
 
+  depend_on 'rspec', :development => true
+}
 
 task 'ann:prereqs' do
   Bones.config.name = 'Loquacious'
 end
 
+# depending on bones (even as a development dependency) creates a circular
+# reference that prevents the auto install of little-plugger when instsalling
+# bones
+::Bones.config.gem._spec.dependencies.delete_if {|d| d.name == 'bones'}
