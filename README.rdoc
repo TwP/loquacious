@@ -212,7 +212,7 @@ they can appear above the attribute and value on their own line.
 
 (The MIT License)
 
-Copyright (c) 2009
+Copyright (c) 2009-2010
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

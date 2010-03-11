@@ -1,3 +1,10 @@
+== 1.5.0 / 2010-03-11
+
+* 2 minor enhancements
+  * Adding support for evaluation of Proc objects
+  * Upgrading to the latest Mr Bones
+
+
 == 1.4.2 / 2010-02-01
 
 * 1 bug fix
