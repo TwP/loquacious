@@ -5,9 +5,6 @@ rescue LoadError
   abort '### please install the "bones" gem ###'
 end
 
-ensure_in_path 'lib'
-require 'loquacious'
-
 task :default => 'spec:specdoc'
 task 'gem:release' => 'spec:run'
 
@@ -16,7 +13,6 @@ Bones {
   authors      'Tim Pease'
   email        'tim.pease@gmail.com'
   url          'http://gemcutter.org/gems/loquacious'
-  version      Loquacious::VERSION
   readme_file  'README.rdoc'
   ignore_file  '.gitignore'
   spec.opts << '--color'
@@ -31,6 +27,6 @@ task 'ann:prereqs' do
 end
 
 # depending on bones (even as a development dependency) creates a circular
-# reference that prevents the auto install of little-plugger when instsalling
+# reference that prevents the auto install of loquacious when instsalling
 # bones
 ::Bones.config.gem._spec.dependencies.delete_if {|d| d.name == 'bones'}
