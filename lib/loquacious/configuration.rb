@@ -86,18 +86,22 @@ module Loquacious
       __eigenclass_eval "attr_writer :#{m}"
       __eigenclass_eval <<-CODE
         def #{m}( *args, &block )
-          v = (1 == args.length ? args.first : args)
-          v = nil if args.empty?
-          v = DSL.evaluate(&block) if block
+          if args.empty? and !block
+            return @#{m} if @#{m}.kind_of?(Configuration)
+            return @#{m}.respond_to?(:call) ? @#{m}.call : @#{m}
+          end
 
-          return @#{m} unless v or v == false
+          v = (1 == args.length ? args.first : args)
+          v = DSL.evaluate(&block) if block
 
           if @#{m}.kind_of?(Configuration)
             @#{m}.merge! v
           else
             @#{m} = v
           end
-          return @#{m}
+
+          return @#{m} if @#{m}.kind_of?(Configuration)
+          return @#{m}.respond_to?(:call) ? @#{m}.call : @#{m}
         end
       CODE
 

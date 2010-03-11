@@ -88,6 +88,28 @@ describe Loquacious::Configuration do
     cfg[:split].should == 'join'
     cfg[:raise].should == 'double down'
     cfg[:puts].should == 'not what you think'
+
+    cfg.fork.should == 'spoon knife spork'
+    cfg.split.should == 'join'
+    cfg.raise.should == 'double down'
+    cfg.puts.should == 'not what you think'
+  end
+
+  it 'should evaluate Proc objects when fetching values' do
+    obj = Loquacious::Configuration.new  {
+            first    'foo'
+            second   'bar'
+          }
+
+    obj.third = Proc.new { obj.first + obj.second }
+    obj.third.should == 'foobar'
+
+    obj.second = 'baz'
+    obj.third.should == 'foobaz'
+
+    obj.first = 'Hello '
+    obj.second = 'World!'
+    obj.third.should == 'Hello World!'
   end
 
   # -----------------------------------------------------------------------
