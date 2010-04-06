@@ -1,3 +1,8 @@
+== 1.5.2 / 2010-04-06
+
+* 1 bug fix
+  * Accidentally undefining the initialize method for the DSL
+
 == 1.5.1 / 2010-04-06
 
 * 1 bug fix

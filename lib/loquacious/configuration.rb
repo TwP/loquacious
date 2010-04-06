@@ -185,7 +185,7 @@ module Loquacious
     # configuration object.
     #
     class DSL
-      Keepers = %r/^__|^object_id$/
+      Keepers = %r/^__|^object_id|^initialize$/
       instance_methods(true).each do |m|
         next if m[Keepers]
         undef_method m
