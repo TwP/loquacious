@@ -49,8 +49,12 @@ module Loquacious
       alias :help :help_for
     end
 
+    # Internal alias for the respond_to? method.
+    #
+    alias :__respond_to? :respond_to?
+
     Keepers = %r/^__|^object_id$|^instance_of\?$|^kind_of\?$|^equal\?$/
-    instance_methods.each do |m|
+    instance_methods(true).each do |m|
       next if m[Keepers]
       undef_method m
     end
@@ -106,8 +110,18 @@ module Loquacious
       CODE
 
       __desc[m]
-      self.__send__("#{m}=", nil)
-      self.__send__("#{m}", *args, &block)
+      self.__send("#{m}=", nil)
+      self.__send("#{m}", *args, &block)
+    end
+
+    # Only invoke public methods on the Configuration instances.
+    #
+    def __send( symbol, *args, &block )
+      if self.__respond_to? symbol
+        self.__send__(symbol, *args, &block)
+      else
+        self.method_missing(symbol, *args, &block)
+      end
     end
 
     # Evaluate the given _code_ string in the context of this object's
@@ -132,11 +146,11 @@ module Loquacious
       Kernel.raise Error, "can only merge another Configuration" unless other.kind_of?(Configuration)
 
       other.__desc.each do |key,desc|
-        value = other.__send__(key)
-        if self.__send__(key).kind_of?(Configuration)
-          self.__send__(key).merge! value
+        value = other.__send(key)
+        if self.__send(key).kind_of?(Configuration)
+          self.__send(key).merge! value
         else
-          self.__send__("#{key}=", value)
+          self.__send("#{key}=", value)
         end
         __desc[key] = desc
       end
@@ -153,7 +167,7 @@ module Loquacious
     #   config.port    #=> 1234
     #
     def []( key )
-      self.__send__(key)
+      self.__send(key)
     end
 
     # Provides hash accessor notation for configuration values.
@@ -163,7 +177,7 @@ module Loquacious
     #   config.port            #=> 8808
     #
     def []=( key, value )
-      self.__send__(key, value)
+      self.__send(key, value)
     end
 
     # Implementation of a doman specific language for creating configuration
@@ -172,7 +186,11 @@ module Loquacious
     #
     class DSL
       Keepers = %r/^__|^object_id$/
-      instance_methods.each do |m|
+      instance_methods(true).each do |m|
+        next if m[Keepers]
+        undef_method m
+      end
+      private_instance_methods(true).each do |m|
         next if m[Keepers]
         undef_method m
       end
@@ -219,7 +237,7 @@ module Loquacious
           self.desc(opts[:desc]) if opts.has_key? :desc
         end
 
-        __config.__send__(m, *args, &block)
+        __config.__send(m, *args, &block)
         __config.__desc[m] = @description
 
         @description = nil

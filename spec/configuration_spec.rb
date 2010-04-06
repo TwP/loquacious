@@ -95,6 +95,18 @@ describe Loquacious::Configuration do
     cfg.puts.should == 'not what you think'
   end
 
+  it 'should not be affected by loading other modules like timeout' do
+    require 'timeout'
+    cfg = Loquacious::Configuration.new {
+            timeout  10
+            foo      'bar'
+            baz      'buz'
+          }
+    cfg.timeout.should == 10
+    cfg.foo.should == 'bar'
+    cfg.baz.should == 'buz'
+  end
+
   it 'should evaluate Proc objects when fetching values' do
     obj = Loquacious::Configuration.new  {
             first    'foo'
