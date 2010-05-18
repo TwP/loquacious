@@ -61,7 +61,7 @@ information about the undefined properties.
     # undefined value came from.
     #
     def initialize( key )
-      @key = Kernel.Array(key.to_s)
+      @key = Kernel.Array(key)
     end
 
     # An undefined value acts like a +nil+ in that it has no value of its own.
@@ -76,7 +76,7 @@ information about the undefined properties.
     # the key name.
     #
     def method_missing( method, *args, &block )
-      key = [].concat(@key) << method.to_s
+      key = @key.dup << method.to_s
       Undefined.warn key
       return Undefined.new key
     end
