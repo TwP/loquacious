@@ -58,31 +58,31 @@ they can appear above the attribute and value on their own line.
   # A simple example that configures three options (a b c) along with
   # descriptions for each option. The descriptions along with the
   # values for the configuration options are printed to the terminal.
-  
+
   require 'loquacious'
   include Loquacious
-  
+
   Configuration.for(:simple) {
     desc 'Your first configuration option'
     a "value for 'a'"
-  
+
     desc 'To be or not to be'
     b "William Shakespeare"
-  
+
     desc 'The underpinings of Ruby'
     c 42
   }
-  
+
   help = Configuration.help_for :simple
   help.show :values => true
 
   ====== output ======
    Your first configuration option
     - a => "value for 'a'"
-  
+
    To be or not to be
     - b => "William Shakespeare"
-  
+
    The underpinings of Ruby
     - c => 42
 
@@ -138,25 +138,25 @@ they can appear above the attribute and value on their own line.
   ====== output ======
    Configuration options for ActiveRecord::Base.
     - active_record
-   
+
    Determines whether to use ANSI codes to colorize the logging statements committed
    by the connection adapter. These colors make it much easier to overview things
    during debugging (when used through a reader like +tail+ and on a black background),
    but may complicate matters if you use software like syslog. This is true, by default.
     - active_record.colorize_logging => true
-   
+
    Determines whether to use Time.local (using :local) or Time.utc (using :utc)
    when pulling dates and times from the database. This is set to :local by default.
     - active_record.default_timezone => :local
-   
+
    The log level to use for the default Rails logger. In production mode,
    this defaults to :info. In development mode, it defaults to :debug.
     - log_level                      => :info
-   
+
    The path to the log file to use. Defaults to log/#{environment}.log
    (e.g. log/development.log or log/production.log).
     - log_path                       => "log/development.log"
-   
+
    The application's base directory.
     - root_path                      => "."
 
@@ -195,17 +195,17 @@ they can appear above the attribute and value on their own line.
   ====== output ======
    The log level to use for the default Rails logger. In production mode,
    this defaults to :info. In development mode, it defaults to :debug.
-   
+
      config.log_level = 'debug'
      config.log_level = :warn
-   
+
     - log_level => :warn
-   
+
    The path to the log file to use. Defaults to log/#{environment}.log
    (e.g. log/development.log or log/production.log).
-   
+
      config.log_path = File.join(ROOT, "log", "#{environment}.log
-   
+
     - log_path  => "log/development.log"
 
 == LICENSE:
