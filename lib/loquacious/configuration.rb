@@ -110,7 +110,9 @@ module Loquacious
       CODE
 
       __desc[m]
-      self.__send("#{m}=", nil)
+
+      default = (args.empty? and !block) ? Loquacious::Undefined.new(m) : nil
+      self.__send("#{m}=", default)
       self.__send("#{m}", *args, &block)
     end
 
@@ -179,6 +181,7 @@ module Loquacious
     def []=( key, value )
       self.__send(key, value)
     end
+
 
     # Implementation of a doman specific language for creating configuration
     # objects. Blocks of code are evaluted by the DSL which returns a new
@@ -258,4 +261,3 @@ module Loquacious
   end  # class Configuration
 end  # module Loquacious
 
-# EOF

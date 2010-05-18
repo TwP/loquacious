@@ -144,9 +144,13 @@ class Loquacious::Configuration
     # single configuration attribute.
     #
     Node = Struct.new( :config, :name, :desc, :key ) {
-      def obj() config.__send__(key); end
       def config?() obj.kind_of? ::Loquacious::Configuration; end
+      def obj()
+        o = config.__send__(key)
+        o.kind_of?(::Loquacious::Undefined) ? nil : o
+      end
     }
 
   end  # class Iterator
 end  # class Loquacious::Configuration
+

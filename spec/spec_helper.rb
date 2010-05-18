@@ -12,7 +12,11 @@ Spec::Runner.configure do |config|
   # config.mock_with :flexmock
   # config.mock_with :rr
 
+  Loquacious::Undefined.io = StringIO.new
+
   config.before :each do
+    Loquacious::Undefined.io.clear
+
     table = Loquacious::Configuration.instance_variable_get(:@table)
     table.clear
 

@@ -96,6 +96,7 @@ end  # module Loquacious
 
 Loquacious.libpath {
   require 'loquacious/core_ext/string'
+  require 'loquacious/undefined'
   require 'loquacious/configuration'
   require 'loquacious/configuration/iterator'
   require 'loquacious/configuration/help'
