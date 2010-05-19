@@ -53,7 +53,7 @@ module Loquacious
     #
     alias :__respond_to? :respond_to?
 
-    Keepers = %r/^__|^object_id$|^instance_of\?$|^kind_of\?$|^equal\?$/
+    Keepers = %r/^__|^object_id$|^\w+\?$/
     instance_methods(true).each do |m|
       next if m[Keepers]
       undef_method m

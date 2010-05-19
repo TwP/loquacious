@@ -1,3 +1,8 @@
+== 1.6.1 / 2010-04-19
+
+* 1 bug fix
+  * Allow interrogative methods on configuration objects (nil?)
+
 == 1.6.0 / 2010-04-18
 
 * 1 minor enhancement
