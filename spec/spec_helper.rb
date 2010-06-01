@@ -1,6 +1,5 @@
 
-require File.expand_path(
-    File.join(File.dirname(__FILE__), %w[.. lib loquacious]))
+require File.expand_path('../lib/loquacious', File.dirname(__FILE__))
 
 Spec::Runner.configure do |config|
   # == Mock Framework
