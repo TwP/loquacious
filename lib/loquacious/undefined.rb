@@ -12,7 +12,7 @@ module Loquacious
   #
   class Undefined
 
-    Keepers = %r/^__|^object_id$|^initialize$|^kind_of\?$|^respond_to\?$|^call$/
+    Keepers = %r/^__|^object_id$|^initialize$|^call$|^\w+\?$/
     instance_methods(true).each do |m|
       next if m[Keepers]
       undef_method m
@@ -68,6 +68,12 @@ information about the undefined properties.
     # This method always returns +true+.
     #
     def nil?() true; end
+
+    # We can respond to any method except :call. The call method is reserved
+    # for Procs and lambdas, and it is used internally by loquacious for lazy
+    # evaluation of configuration parameters.
+    #
+    def respond_to_missing?( id, priv = false ) id != :call; end
 
     # For every method invoked on an undefined object, generate a warning
     # message describing the undefined value and the method that was called.
