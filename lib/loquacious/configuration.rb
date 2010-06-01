@@ -49,11 +49,7 @@ module Loquacious
       alias :help :help_for
     end
 
-    # Internal alias for the respond_to? method.
-    #
-    alias :__respond_to? :respond_to?
-
-    Keepers = %r/^__|^object_id$|^\w+\?$/
+    Keepers = %r/^__|^object_id$|^initialize$|^\w+\?$/
     instance_methods(true).each do |m|
       next if m[Keepers]
       undef_method m
@@ -119,7 +115,7 @@ module Loquacious
     # Only invoke public methods on the Configuration instances.
     #
     def __send( symbol, *args, &block )
-      if self.__respond_to? symbol
+      if self.respond_to? symbol
         self.__send__(symbol, *args, &block)
       else
         self.method_missing(symbol, *args, &block)
@@ -188,7 +184,6 @@ module Loquacious
     # configuration object.
     #
     class DSL
-      Keepers = %r/^__|^object_id|^initialize$/
       instance_methods(true).each do |m|
         next if m[Keepers]
         undef_method m
