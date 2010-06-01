@@ -1,3 +1,8 @@
+== 1.6.2 / 2010-06-01
+
+* Bug Fixes
+  * Compatibility with Ruby 1.9.2
+
 == 1.6.1 / 2010-04-19
 
 * 1 bug fix
