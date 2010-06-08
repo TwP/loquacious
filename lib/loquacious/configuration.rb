@@ -105,7 +105,7 @@ module Loquacious
         end
       CODE
 
-      __desc[m]
+      __desc[m] = nil
 
       default = (args.empty? and !block) ? Loquacious::Undefined.new(m.to_s) : nil
       self.__send("#{m}=", default)

@@ -1,3 +1,8 @@
+== 1.6.3 / 2010-06-07
+
+* Bug Fixes
+  * Assign a nil description when none is given [Nathan Witmer]
+
 == 1.6.2 / 2010-06-01
 
 * Bug Fixes

@@ -135,7 +135,7 @@ describe Loquacious::Configuration do
 
       @obj.first.should be_nil
       @obj.second.should be_nil
-      @obj.__desc.should == {}
+      @obj.__desc.should == {:first => nil, :second => nil}
 
       @obj.merge! other
       @obj.first.should == 'foo'
