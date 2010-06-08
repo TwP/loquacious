@@ -124,6 +124,56 @@ describe Loquacious::Configuration do
     obj.third.should == 'Hello World!'
   end
 
+  it 'should return a value when evaluating inside the DSL' do
+    obj = Loquacious::Configuration.new  {
+            first   'foo'
+            second  {
+              bar    nil
+            }
+          }
+
+    obj.first.should == 'foo'
+    obj.second.bar.should be_nil
+
+    Loquacious::Configuration::DSL.new(obj) {
+      first 'bar'
+      second.bar 'no longer nil'
+    }
+
+    obj.first.should == 'bar'
+    obj.second.bar.should == 'no longer nil'
+  end
+
+  it 'should not delete descriptions' do
+    obj = Loquacious::Configuration.new  {
+            first 'foo', :desc => 'the first value'
+
+            desc 'the second value'
+            second  {
+              bar nil, :desc => 'time to go drinking'
+            }
+          }
+
+    obj.first.should == 'foo'
+    obj.second.bar.should be_nil
+
+    obj.__desc[:first].should == 'the first value'
+    obj.__desc[:second].should == 'the second value'
+    obj.second.__desc[:bar].should == 'time to go drinking'
+
+    Loquacious::Configuration::DSL.new(obj) {
+      first 'bar'
+      second.bar 'no longer nil'
+    }
+
+    obj.first.should == 'bar'
+    obj.second.bar.should == 'no longer nil'
+
+    obj.__desc[:first].should == 'the first value'
+    obj.__desc[:second].should == 'the second value'
+    obj.second.__desc[:bar].should == 'time to go drinking'
+  end
+
   # -----------------------------------------------------------------------
   describe 'when merging' do
 

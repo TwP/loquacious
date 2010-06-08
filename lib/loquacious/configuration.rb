@@ -27,12 +27,10 @@ module Loquacious
           return @table.has_key?(name) ? @table[name] : nil
         end
 
-        cfg = DSL.evaluate(&block)
-
         if @table.has_key? name
-          @table[name].merge! cfg
+          DSL.new(@table[name], &block)
         else
-          @table[name] = cfg
+          @table[name] = DSL.evaluate(&block)
         end
       end
 
@@ -105,7 +103,7 @@ module Loquacious
         end
       CODE
 
-      __desc[m] = nil
+      __desc[m] = nil unless __desc.has_key? m
 
       default = (args.empty? and !block) ? Loquacious::Undefined.new(m.to_s) : nil
       self.__send("#{m}=", default)
@@ -184,6 +182,8 @@ module Loquacious
     # configuration object.
     #
     class DSL
+      alias :__instance_eval :instance_eval
+
       instance_methods(true).each do |m|
         next if m[Keepers]
         undef_method m
@@ -215,11 +215,10 @@ module Loquacious
       # Creates a new DSL and evaluates the given _block_ in the context of
       # the DSL.
       #
-      def initialize( &block )
+      def initialize( config = nil, &block )
         @description = nil
-        @__config = Configuration.new
-        Object.instance_method(:instance_eval).bind(self).
-            call(&block) if block
+        @__config = config || Configuration.new
+        __instance_eval(&block)
       end
 
       # Dynamically adds the given _method_ to the configuration as an
@@ -235,10 +234,10 @@ module Loquacious
           self.desc(opts[:desc]) if opts.has_key? :desc
         end
 
-        __config.__send(m, *args, &block)
-        __config.__desc[m] = @description
-
+        rv = __config.__send(m, *args, &block)
+        __config.__desc[m] = @description if @description
         @description = nil
+        rv
       end
 
       # Store the _string_ as the description for the next attribute that
