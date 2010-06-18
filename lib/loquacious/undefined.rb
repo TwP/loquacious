@@ -29,6 +29,7 @@ module Loquacious
         end
       CODE
     end
+    undef_method :method_missing
 
     @io = $stderr
     @first_time = true
@@ -84,7 +85,7 @@ information about the undefined properties.
     def method_missing( method, *args, &block )
       key = @key.dup << method.to_s
       Undefined.warn key
-      return Undefined.new key
+      return Undefined.new(key)
     end
 
   end  # class Undefined

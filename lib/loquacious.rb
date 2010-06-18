@@ -78,6 +78,7 @@ module Loquacious
     #
     #   Loquacious.remove :gem           # courtesy of rubygems
     #   Loquacious.remove :test, :file   # courtesy of rake
+    #   Loquacious.remove :main          # courtesy of main
     #
     def remove( *args )
       args.each { |name|
@@ -102,4 +103,3 @@ Loquacious.libpath {
   require 'loquacious/configuration/help'
 }
 
-# EOF

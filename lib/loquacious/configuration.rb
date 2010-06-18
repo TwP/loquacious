@@ -60,6 +60,7 @@ module Loquacious
         end
       CODE
     end
+    undef_method :method_missing
 
     # Accessor for the description hash.
     attr_reader :__desc
@@ -200,6 +201,7 @@ module Loquacious
           end
         CODE
       end
+      undef_method :method_missing
 
       # Create a new DSL and evaluate the given _block_ in the context of
       # the DSL. Returns a newly created configuration object.
