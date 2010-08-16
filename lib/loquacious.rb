@@ -92,6 +92,41 @@ module Loquacious
       }
     end
 
+    # A helper method that will create a deep copy of a given Configuration
+    # object. This method accepts either a Configuration instance or a name
+    # that can be used to lookup the Configuration instance (via the
+    # "Loquacious.configuration_for" method).
+    #
+    #   Loquacious.copy(config)
+    #   Loquacious.copy('name')
+    #
+    # Optionally a block can be given. It will be used to modify the returned
+    # copy with the given values. The Configuration object being copied is
+    # never modified by this method.
+    #
+    #   Loquacious.copy(config) {
+    #     foo 'bar'
+    #     baz 'buz'
+    #   }
+    #
+    def copy( config, &block )
+      config = Configuration.for(config) unless config.instance_of? Configuration
+      return unless config
+
+      rv = Configuration.new
+      rv.merge!(config)
+
+      # deep copy
+      rv.__desc.each do |key,desc|
+        value = rv.__send(key)
+        next unless value.instance_of? Configuration
+        rv.__send("#{key}=", ::Loquacious.copy(value))
+      end
+
+      rv.merge!(Configuration::DSL.evaluate(&block)) if block
+      rv
+    end
+
   end  # class << self
 end  # module Loquacious
 

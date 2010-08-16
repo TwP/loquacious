@@ -1,5 +1,7 @@
-== 1.6.5 / 2010-06-
+== 1.7.0 / 2010-08-16
 
+* Enhancements
+  * Adding a "copy" function for configuration objects
 * Bug Fixes
   * Fixing warnings
 
