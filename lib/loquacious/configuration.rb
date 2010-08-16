@@ -47,20 +47,19 @@ module Loquacious
       alias :help :help_for
     end
 
-    Keepers = %r/^__|^object_id$|^initialize$|^\w+\?$/
     instance_methods(true).each do |m|
-      next if m[Keepers]
+      next if m[::Loquacious::KEEPERS]
       undef_method m
     end
     Kernel.methods.each do |m|
-      next if m[Keepers]
+      next if m[::Loquacious::KEEPERS]
       module_eval <<-CODE
         def #{m}( *args, &block )
           self.method_missing('#{m}', *args, &block)
         end
       CODE
     end
-    undef_method :method_missing
+    undef_method :method_missing rescue nil
 
     # Accessor for the description hash.
     attr_reader :__desc
@@ -186,22 +185,22 @@ module Loquacious
       alias :__instance_eval :instance_eval
 
       instance_methods(true).each do |m|
-        next if m[Keepers]
+        next if m[::Loquacious::KEEPERS]
         undef_method m
       end
       private_instance_methods(true).each do |m|
-        next if m[Keepers]
+        next if m[::Loquacious::KEEPERS]
         undef_method m
       end
       Kernel.methods.each do |m|
-        next if m[Keepers]
+        next if m[::Loquacious::KEEPERS]
         module_eval <<-CODE
           def #{m}( *args, &block )
             self.method_missing('#{m}', *args, &block)
           end
         CODE
       end
-      undef_method :method_missing
+      undef_method :method_missing rescue nil
 
       # Create a new DSL and evaluate the given _block_ in the context of
       # the DSL. Returns a newly created configuration object.

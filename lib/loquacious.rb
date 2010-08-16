@@ -4,6 +4,9 @@ module Loquacious
   # :stopdoc:
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
+  KEEPERS = (RUBY_PLATFORM == 'java') ?
+            %r/^__|^object_id$|^initialize$|^singleton_method_added$|^\w+\?$/ :
+            %r/^__|^object_id$|^initialize$|^\w+\?$/
   # :startdoc:
 
   class << self

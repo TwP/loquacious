@@ -12,24 +12,23 @@ module Loquacious
   #
   class Undefined
 
-    Keepers = %r/^__|^object_id$|^initialize$|^call$|^\w+\?$/
     instance_methods(true).each do |m|
-      next if m[Keepers]
+      next if m[::Loquacious::KEEPERS]
       undef_method m
     end
     private_instance_methods(true).each do |m|
-      next if m[Keepers]
+      next if m[::Loquacious::KEEPERS]
       undef_method m
     end
     Kernel.methods.each do |m|
-      next if m[Keepers]
+      next if m[::Loquacious::KEEPERS]
       module_eval <<-CODE
         def #{m}( *args, &block )
           self.method_missing('#{m}', *args, &block)
         end
       CODE
     end
-    undef_method :method_missing
+    undef_method :method_missing rescue nil
 
     @io = $stderr
     @first_time = true
