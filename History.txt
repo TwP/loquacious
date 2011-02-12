@@ -1,3 +1,8 @@
+== 1.7.1 / 2011-02-11
+
+Bug Fixes
+  - Fixing the "alias instance_eval" warning on JRuby
+
 == 1.7.0 / 2010-08-16
 
 * Enhancements
