@@ -177,13 +177,11 @@ module Loquacious
     end
 
 
-    # Implementation of a doman specific language for creating configuration
+    # Implementation of a domain specific language for creating configuration
     # objects. Blocks of code are evaluted by the DSL which returns a new
     # configuration object.
     #
     class DSL
-      alias :__instance_eval :instance_eval
-
       instance_methods(true).each do |m|
         next if m[::Loquacious::KEEPERS]
         undef_method m
@@ -219,7 +217,7 @@ module Loquacious
       def initialize( config = nil, &block )
         @description = nil
         @__config = config || Configuration.new
-        __instance_eval(&block)
+        instance_eval(&block)
       end
 
       # Dynamically adds the given _method_ to the configuration as an

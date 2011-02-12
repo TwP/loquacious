@@ -5,7 +5,7 @@ rescue LoadError
   abort '### please install the "bones" gem ###'
 end
 
-task :default => 'spec:specdoc'
+task :default => 'spec:run'
 task 'gem:release' => 'spec:run'
 
 Bones {
@@ -16,7 +16,6 @@ Bones {
   readme_file  'README.rdoc'
   ignore_file  '.gitignore'
   spec.opts << '--color'
-  rubyforge.name 'codeforpeople'
   use_gmail
 
   depend_on 'rspec', :development => true
