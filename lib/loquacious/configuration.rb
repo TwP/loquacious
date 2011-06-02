@@ -1,7 +1,7 @@
 
 module Loquacious
 
-  #
+  # FIXME: document
   #
   class Configuration
 
@@ -28,9 +28,24 @@ module Loquacious
         end
 
         if @table.has_key? name
-          DSL.new(@table[name], &block)
+          DSL.evaluate(:config => @table[name], &block)
         else
           @table[name] = DSL.evaluate(&block)
+        end
+      end
+
+      # call-seq:
+      #    Configuration.defaults_for( name ) { block }
+      #
+      # FIXME: document
+      #
+      def defaults_for( name, &block )
+        raise "defaults require a block" if block.nil?
+
+        if @table.has_key? name
+          DSL.evaluate(:config => @table[name], :defaults_mode => true, &block)
+        else
+          @table[name] = DSL.evaluate(:defaults_mode => true, &block)
         end
       end
 
@@ -64,12 +79,22 @@ module Loquacious
     # Accessor for the description hash.
     attr_reader :__desc
 
+    # FIXME: document
+    attr_reader :__values
+
+    attr_reader :__defaults
+
+    attr_accessor :__defaults_mode
+
     # Create a new configuration object and initialize it using an optional
     # _block_ of code.
     #
     def initialize( &block )
       @__desc = Hash.new
-      self.merge!(DSL.evaluate(&block)) if block
+      @__values = Hash.new
+      @__defaults = Hash.new
+      @__defaults_mode = false
+      DSL.evaluate(:config => self, &block) if block
     end
 
     # When invoked, an attribute reader and writer are defined for the
@@ -81,31 +106,40 @@ module Loquacious
     def method_missing( method, *args, &block )
       m = method.to_s.delete('=').to_sym
 
-      __eigenclass_eval "attr_writer :#{m}"
-      __eigenclass_eval <<-CODE
+      __eigenclass_eval "def #{m}=( value ) @__values[#{m.inspect}] = value; end", __FILE__, __LINE__
+      __eigenclass_eval <<-CODE, __FILE__, __LINE__+1
         def #{m}( *args, &block )
+          value = @__values[#{m.inspect}]
+
           if args.empty? and !block
-            return @#{m} if @#{m}.kind_of?(Configuration)
-            return @#{m}.respond_to?(:call) ? @#{m}.call : @#{m}
+            return value if value.kind_of?(Configuration)
+            return @__defaults[#{m.inspect}] if value.kind_of?(Loquacious::Undefined) and @__defaults.has_key? #{m.inspect}
+            return value.respond_to?(:call) ? value.call : value
           end
 
-          v = (1 == args.length ? args.first : args)
-          v = DSL.evaluate(&block) if block
-
-          if @#{m}.kind_of?(Configuration)
-            @#{m}.merge! v
+          if block
+            v = DSL.evaluate(:defaults_mode => __defaults_mode, &block)
+            if value.kind_of?(Configuration)
+              value.merge! v
+            else
+              @__values[#{m.inspect}] = v
+            end
           else
-            @#{m} = v
+            v = (1 == args.length ? args.first : args)
+            if __defaults_mode
+              @__defaults[#{m.inspect}] = v
+            else
+              @__values[#{m.inspect}] = v
+            end
           end
 
-          return @#{m} if @#{m}.kind_of?(Configuration)
-          return @#{m}.respond_to?(:call) ? @#{m}.call : @#{m}
+          return self.#{m}
         end
       CODE
 
       __desc[m] = nil unless __desc.has_key? m
 
-      default = (args.empty? and !block) ? Loquacious::Undefined.new(m.to_s) : nil
+      default = ((__defaults_mode or args.empty?) and !block) ? Loquacious::Undefined.new(m.to_s) : nil
       self.__send("#{m}=", default)
       self.__send("#{m}", *args, &block)
     end
@@ -123,9 +157,9 @@ module Loquacious
     # Evaluate the given _code_ string in the context of this object's
     # eigenclass (singleton class).
     #
-    def __eigenclass_eval( code )
+    def __eigenclass_eval( code, file, line )
       ec = class << self; self; end
-      ec.module_eval code
+      ec.module_eval code, file, line
     rescue StandardError
       Kernel.raise Error, "cannot evalutate this code:\n#{code}\n"
     end
@@ -141,14 +175,26 @@ module Loquacious
       return self if other.equal? self
       Kernel.raise Error, "can only merge another Configuration" unless other.kind_of?(Configuration)
 
+      other_values = other.__values
+      other_defaults = other.__defaults
+
       other.__desc.each do |key,desc|
-        value = other.__send(key)
-        if self.__send(key).kind_of?(Configuration)
-          self.__send(key).merge! value
-        else
-          self.__send("#{key}=", value)
+        value = @__values[key]
+        other_value = other_values[key]
+
+        if value.kind_of?(Configuration) and other_value.kind_of?(Configuration)
+          value.merge! other_value
+        elsif !other_value.kind_of?(Loquacious::Undefined)
+          @__values[key] = other_value
         end
-        __desc[key] = desc
+
+        if other_defaults.has_key? key
+          @__defaults[key] = other_defaults[key]
+        end
+
+        if desc
+          __desc[key] = desc
+        end
       end
 
       self
@@ -192,7 +238,7 @@ module Loquacious
       end
       Kernel.methods.each do |m|
         next if m[::Loquacious::KEEPERS]
-        module_eval <<-CODE
+        module_eval <<-CODE, __FILE__, __LINE__+1
           def #{m}( *args, &block )
             self.method_missing('#{m}', *args, &block)
           end
@@ -203,8 +249,8 @@ module Loquacious
       # Create a new DSL and evaluate the given _block_ in the context of
       # the DSL. Returns a newly created configuration object.
       #
-      def self.evaluate( &block )
-        dsl = self.new(&block)
+      def self.evaluate( opts = {}, &block )
+        dsl = self.new(opts, &block)
         dsl.__config
       end
 
@@ -214,10 +260,13 @@ module Loquacious
       # Creates a new DSL and evaluates the given _block_ in the context of
       # the DSL.
       #
-      def initialize( config = nil, &block )
+      def initialize( opts = {}, &block )
         @description = nil
-        @__config = config || Configuration.new
+        @__config = opts[:config] || Configuration.new
+        @__config.__defaults_mode = opts.key?(:defaults_mode) ? opts[:defaults_mode] : false
         instance_eval(&block)
+      ensure
+        @__config.__defaults_mode = false
       end
 
       # Dynamically adds the given _method_ to the configuration as an

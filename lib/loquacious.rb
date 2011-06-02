@@ -25,6 +25,13 @@ module Loquacious
     alias :config_for    :configuration_for
     alias :config        :configuration_for
 
+    # FIXME: document
+    #
+    def defaults_for( name, &block )
+      ::Loquacious::Configuration.defaults_for(name, &block)
+    end
+    alias :defaults :defaults_for
+
     # Returns a Help instance for the configuration associated with the
     # given _name_. See the Help#initialize method for the options that
     # can be used with this method.

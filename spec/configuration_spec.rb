@@ -2,10 +2,6 @@
 require File.expand_path('spec_helper', File.dirname(__FILE__))
 
 describe Loquacious::Configuration do
-  before(:all) do
-    @respond_to = Object.instance_method(:respond_to?)
-  end
-
   before(:each) do
     @obj = Loquacious::Configuration.new
   end
@@ -30,13 +26,12 @@ describe Loquacious::Configuration do
   end
 
   it 'should deine attribute accessors when first used' do
-    m = @respond_to.bind(@obj)
-    m.call(:foo).should == false
-    m.call(:foo=).should == false
+    @obj.respond_to?(:foo).should == false
+    @obj.respond_to?(:foo=).should == false
 
     @obj.foo
-    m.call(:foo).should == true
-    m.call(:foo=).should == true
+    @obj.respond_to?(:foo).should == true
+    @obj.respond_to?(:foo=).should == true
   end
 
   it 'should provide a hash object for storing method descriptions' do
@@ -135,7 +130,7 @@ describe Loquacious::Configuration do
     obj.first.should == 'foo'
     obj.second.bar.should be_nil
 
-    Loquacious::Configuration::DSL.new(obj) {
+    Loquacious::Configuration::DSL.evaluate(:config => obj) {
       first 'bar'
       second.bar 'no longer nil'
     }
@@ -161,7 +156,7 @@ describe Loquacious::Configuration do
     obj.__desc[:second].should == 'the second value'
     obj.second.__desc[:bar].should == 'time to go drinking'
 
-    Loquacious::Configuration::DSL.new(obj) {
+    Loquacious::Configuration::DSL.evaluate(:config => obj) {
       first 'bar'
       second.bar 'no longer nil'
     }
@@ -275,8 +270,127 @@ describe Loquacious::Configuration do
       other.__desc[:first].should == "  This is the first thing we are defining in this config.\n  It has a multiline comment."
       other.__desc[:second].should == "This is a short explanation\n\nExample:\n  do this then that\n  followed by this line"
     end
-
   end
+
+  # -----------------------------------------------------------------------
+  describe 'when working with defaults' do
+    before :each do
+      Loquacious::Configuration.instance_variable_get(:@table).clear
+    end
+
+    it 'returns default values when no other value exists' do
+      Loquacious::Configuration.defaults_for('test') {
+        first 'foo', :desc => 'the first value'
+        desc 'the second value'
+        second  {
+          bar nil, :desc => 'time to go drinking'
+        }
+      }
+
+      c = Loquacious::Configuration.for 'test'
+      c.first.should == 'foo'
+      c.second.bar.should be_nil
+    end
+
+    it 'does not overwrite existing configuration values' do
+      c = Loquacious::Configuration.for('test') {
+            first 1
+            thrid 3
+          }
+
+      Loquacious::Configuration.defaults_for('test') {
+        first 'foo', :desc => 'the first value'
+        desc 'the second value'
+        second  {
+          bar nil, :desc => 'time to go drinking'
+        }
+      }
+
+      c.first.should == 1
+      c.third.should == 3
+      c.second.bar.should be_nil
+
+      c.__desc[:first].should == 'the first value'
+      c.__desc[:second].should == 'the second value'
+      c.second.__desc[:bar].should == 'time to go drinking'
+      c.__desc[:thrid].should be_nil
+    end
+
+    it 'does not overwrite nested configuration values' do
+      c = Loquacious::Configuration.for('test') {
+            first 1
+            second {
+              bar 'pub'
+              baz {
+                buz 'random text'
+                boo 'who'
+              }
+            }
+            thrid 3
+          }
+
+      Loquacious::Configuration.defaults_for('test') {
+        first 'foo', :desc => 'the first value'
+        desc 'the second value'
+        second  {
+          bar 'h-bar', :desc => 'time to go drinking'
+          desc 'getting weird'
+          baz {
+            buz 'buz', :desc => 'post drinking feeling'
+            boo nil, :desc => 'no need to cry about it'
+          }
+        }
+      }
+
+      c.first.should == 1
+      c.third.should == 3
+      c.second.bar.should == 'pub'
+      c.second.baz.buz.should == 'random text'
+      c.second.baz.boo.should == 'who'
+
+      c.second.bar = Loquacious::Undefined.new('second.bar')
+      c.second.bar.should == 'h-bar'
+
+      c.__desc[:first].should == 'the first value'
+      c.__desc[:second].should == 'the second value'
+      c.second.__desc[:bar].should == 'time to go drinking'
+      c.second.__desc[:baz].should == 'getting weird'
+      c.second.baz.__desc[:buz].should == 'post drinking feeling'
+      c.second.baz.__desc[:boo].should == 'no need to cry about it'
+      c.__desc[:thrid].should be_nil
+    end
+
+    it 'supports differing default type' do
+      c = Loquacious::Configuration.for('test') {
+            first 1
+            second {
+              bar 'pub'
+              desc 'overwrite me'
+              baz {
+                buz 'random text'
+                boo 'who'
+              }
+            }
+            thrid 3
+          }
+
+      Loquacious::Configuration.defaults_for('test') {
+        first 'foo', :desc => 'the first value'
+        desc 'the second value'
+        second  {
+          bar 'h-bar', :desc => 'time to go drinking'
+          baz nil, :desc => 'deprecated'
+        }
+      }
+
+      c.second.baz.buz.should == 'random text'
+      c.second.baz.boo.should == 'who'
+
+      c.second.baz = Loquacious::Undefined.new('second.bar')
+      c.second.baz.should be_nil
+      c.second.__desc[:baz].should == 'deprecated'
+    end
+  end
+
 end
 
-# EOF
