@@ -7,14 +7,13 @@ require 'loquacious'
 include Loquacious
 
 Configuration.for(:gutters) {
-  desc <<-__
+  log_path "log/development.log", :desc => <<-__
     The path to the log file to use. Defaults to log/\#{environment}.log
     (e.g. log/development.log or log/production.log).
     |
     |  config.log_path = File.join(ROOT, "log", "\#{environment}.log
     |
   __
-  log_path "log/development.log"
 
   log_level :warn, :desc => <<-__
     |The log level to use for the default Rails logger. In production mode,
