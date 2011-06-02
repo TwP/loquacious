@@ -37,7 +37,16 @@ module Loquacious
       # call-seq:
       #    Configuration.defaults_for( name ) { block }
       #
-      # FIXME: document
+      # Set the default values for the configuration associated with the given
+      # _name_. A _block_ is required by this method.
+      #
+      # Default values do not interfere with normal configuration values. If
+      # both are defined for a particualr configruation setting, then the
+      # regular configuration value will be returned.
+      #
+      # Defaults allow the user to define configuration values before the
+      # library defaults have been loaded. They prevent library defaults from
+      # overriding user settings.
       #
       def defaults_for( name, &block )
         raise "defaults require a block" if block.nil?
@@ -79,11 +88,14 @@ module Loquacious
     # Accessor for the description hash.
     attr_reader :__desc
 
-    # FIXME: document
+    # Accessor for configuration values
     attr_reader :__values
 
+    # Accessor for configuration defaults
     attr_reader :__defaults
 
+    # Flag to switch the configuration object into defaults mode. This allows
+    # default values to be set instead regular values.
     attr_accessor :__defaults_mode
 
     # Create a new configuration object and initialize it using an optional
@@ -113,7 +125,7 @@ module Loquacious
 
           if args.empty? and !block
             return value if value.kind_of?(Configuration)
-            return @__defaults[#{m.inspect}] if value.kind_of?(Loquacious::Undefined) and @__defaults.has_key? #{m.inspect}
+            value = @__defaults[#{m.inspect}] if value.kind_of?(Loquacious::Undefined) and @__defaults.has_key? #{m.inspect}
             return value.respond_to?(:call) ? value.call : value
           end
 

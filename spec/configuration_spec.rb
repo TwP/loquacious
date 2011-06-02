@@ -390,6 +390,28 @@ describe Loquacious::Configuration do
       c.second.baz.should be_nil
       c.second.__desc[:baz].should == 'deprecated'
     end
+
+    it 'properly handles Proc default values' do
+      c = Loquacious::Configuration.for('test') {
+            first 1
+            second {
+              bar 'pub'
+            }
+            thrid 3
+          }
+
+      Loquacious::Configuration.defaults_for('test') {
+        first 'foo', :desc => 'the first value'
+        desc 'the second value'
+        second  {
+          bar 'h-bar', :desc => 'time to go drinking'
+          baz(Proc.new { c.third * 12 }, :desc => 'proc will be evaluated')
+        }
+      }
+
+      c.second.baz.should == 36
+      c.second.__desc[:baz].should == 'proc will be evaluated'
+    end
   end
 
 end
