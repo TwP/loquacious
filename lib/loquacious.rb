@@ -25,7 +25,12 @@ module Loquacious
     alias :config_for    :configuration_for
     alias :config        :configuration_for
 
-    # FIXME: document
+    # Set the default properties for the configuration associated with the
+    # given _name_. A _block_ must be provided to this method.
+    #
+    # The same _name_ can be used multiple times with different configuration
+    # blocks. Each block will add or modify the configuration; i.e. the
+    # configurations are additive.
     #
     def defaults_for( name, &block )
       ::Loquacious::Configuration.defaults_for(name, &block)

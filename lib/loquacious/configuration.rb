@@ -1,7 +1,20 @@
 
 module Loquacious
 
-  # FIXME: document
+  # A Configuration provides a "blank slate" for storing configuration
+  # properties along with descriptions and default values. Configurations are
+  # accessed by name, and hence, the configuration properties can be retrieved
+  # from any location in your code.
+  #
+  # Each property has an associated description that can be displayed to the
+  # user via the Configuration::Help class. This is the main point of the
+  # Loquacious library - tell the user what all yoru configruation properties
+  # actually do!
+  #
+  # Each configurationp property can also have a default value that is
+  # returned if no value has been set for that property. Each property should
+  # hae a sensible default - the user should not have to configure every
+  # property in order to use a piece of code.
   #
   class Configuration
 
