@@ -104,32 +104,28 @@ they can appear above the attribute and value on their own line.
 
     desc "Configuration options for ActiveRecord::Base."
     active_record {
-      desc <<-__
+      colorize_logging true, :desc => <<-__
         Determines whether to use ANSI codes to colorize the logging statements committed
         by the connection adapter. These colors make it much easier to overview things
         during debugging (when used through a reader like +tail+ and on a black background),
         but may complicate matters if you use software like syslog. This is true, by default.
       __
-      colorize_logging true
 
-      desc <<-__
+      default_timezone :local, :desc => <<-__
         Determines whether to use Time.local (using :local) or Time.utc (using :utc)
         when pulling dates and times from the database. This is set to :local by default.
       __
-      default_timezone :local
     }
 
-    desc <<-__
+    log_level :info, :desc => <<-__
       The log level to use for the default Rails logger. In production mode,
       this defaults to :info. In development mode, it defaults to :debug.
     __
-    log_level :info
 
-    desc <<-__
+    log_path 'log/development.log', :desc => <<-__
       The path to the log file to use. Defaults to log/\#{environment}.log
       (e.g. log/development.log or log/production.log).
     __
-    log_path 'log/development.log'
   }
 
   help = Configuration.help_for :nested
@@ -170,14 +166,13 @@ they can appear above the attribute and value on their own line.
   include Loquacious
 
   Configuration.for(:gutters) {
-    desc <<-__
+    log_path "log/development.log", :desc => <<-__
       The path to the log file to use. Defaults to log/\#{environment}.log
       (e.g. log/development.log or log/production.log).
       |
       |  config.log_path = File.join(ROOT, "log", "\#{environment}.log
       |
     __
-    log_path "log/development.log"
 
     log_level :warn, :desc => <<-__
       |The log level to use for the default Rails logger. In production mode,

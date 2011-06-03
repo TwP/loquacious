@@ -1,7 +1,7 @@
 # Using Ruby heredocs for descriptions, the Loquacious configuration will
 # strip out leading whitespace but preserve line breaks. Gutter lines can be
 # used to mark where leading whitespace should be preserved. This is useful
-# is you need to provide example code in your descriptions.
+# if you need to provide example code in your descriptions.
 
 require 'loquacious'
 include Loquacious
