@@ -12,13 +12,12 @@ Bones {
   name         'loquacious'
   authors      'Tim Pease'
   email        'tim.pease@gmail.com'
-  url          'http://gemcutter.org/gems/loquacious'
+  url          'http://rubygems.org/gems/loquacious'
   readme_file  'README.rdoc'
-  ignore_file  '.gitignore'
   spec.opts << '--color'
   use_gmail
 
-  depend_on 'rspec', :development => true
+  depend_on 'rspec', '~> 2.6', :development => true
 }
 
 task 'ann:prereqs' do
