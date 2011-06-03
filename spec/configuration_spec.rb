@@ -92,6 +92,7 @@ describe Loquacious::Configuration do
 
   it 'should not be affected by loading other modules like timeout' do
     require 'timeout'
+    Loquacious.remove :timeout
     cfg = Loquacious::Configuration.new {
             timeout  10
             foo      'bar'
