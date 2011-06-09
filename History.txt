@@ -1,3 +1,8 @@
+== 1.8.1 / 2011-06-09
+
+Bug Fixes
+  - Assignment methods now mirror one another in their return values
+
 == 1.8.0 / 2011-06-03
 
 Enhancements
