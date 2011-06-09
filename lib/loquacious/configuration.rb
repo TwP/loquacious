@@ -157,8 +157,6 @@ module Loquacious
               @__values[#{m.inspect}] = v
             end
           end
-
-          return self.#{m}
         end
       CODE
 
