@@ -415,5 +415,34 @@ describe Loquacious::Configuration do
     end
   end
 
+  # -----------------------------------------------------------------------
+  describe 'when converting to a hash' do
+    it "should do so recursively" do
+      c = Loquacious::Configuration.new {
+        first 1, :desc => 'one is the loneliest number'
+        second {
+          bar 'pub', :desc => 'where the magic happens'
+          desc 'overwrite me'
+          baz {
+            buz 'random text'
+            boo 'who'
+          }
+        }
+        third 3
+      }
+      c.to_hash.should == {
+        :first => 1,
+        :second => {
+          :bar => 'pub',
+          :baz => {
+            :buz => 'randoom text',
+            :boo => 'who'
+          }
+        },
+        :third => 3
+      }
+    end
+  end
+
 end
 
