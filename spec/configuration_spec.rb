@@ -435,7 +435,7 @@ describe Loquacious::Configuration do
         :second => {
           :bar => 'pub',
           :baz => {
-            :buz => 'randoom text',
+            :buz => 'random text',
             :boo => 'who'
           }
         },

@@ -86,14 +86,14 @@ module Loquacious
       # call-seq:
       #   Configuration.to_hash( config )
       #
-      # Recursively convert a configuration object to a hash. This is useful for
-      # passing the configuration to a method which only accepts an option hash.
+      # Recursively convert a configuration object to a hash.
       #
       def to_hash( config )
         hash = {}
         Iterator.new(config).each do |node|
+          next if node.name =~ /\./
           value = node.obj
-          hash[node.name] = node.config? ? to_hash(value) : value
+          hash[node.name.to_sym] = node.config? ? to_hash(value) : value
         end
         hash
       end
@@ -260,11 +260,10 @@ module Loquacious
       self.__send(key, value)
     end
 
-    # Recursively convert the configuration object to a hash. This is useful for
-    # passing the configuration to a method which only accepts an option hash.
+    # Recursively convert the configuration object to a hash.
     #
     def to_hash
-      self.class.to_hash(self)
+      Loquacious::Configuration.to_hash(self)
     end
 
     # Implementation of a domain specific language for creating configuration
