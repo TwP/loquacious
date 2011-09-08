@@ -442,6 +442,10 @@ describe Loquacious::Configuration do
         :third => 3
       }
     end
+    it "just returns an empty hash for an empty configuration" do
+      c = Loquacious::Configuration.new { }
+      c.to_hash.should == {}
+    end
   end
 
 end
