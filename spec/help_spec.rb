@@ -52,7 +52,7 @@ describe Loquacious::Configuration::Help do
     OUTPUT
 
     @help.show_all
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "prints out a specific attribute" do
@@ -62,7 +62,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show_attribute :second
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "properly parses nested attributes" do
@@ -78,7 +78,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show_attribute 'third'
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
     str = <<-OUTPUT
@@ -87,7 +87,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show_attribute %w[third question]
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
     str = <<-OUTPUT
@@ -96,7 +96,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show_attribute 'third.answer'
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "hides nesting attributes" do
@@ -118,7 +118,7 @@ describe Loquacious::Configuration::Help do
     OUTPUT
 
     help.show_all
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
     str = <<-OUTPUT
@@ -130,7 +130,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     help.show_attribute 'third'
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
   end
@@ -159,7 +159,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show_attribute 'fourth'
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "pretty prints values" do
@@ -181,7 +181,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show :values => true
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "closely packs attributes when descriptions are omitted" do
@@ -193,7 +193,7 @@ describe Loquacious::Configuration::Help do
     |  - third.question => :symbol
     OUTPUT
     @help.show_all :values => true, :descriptions => false
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "automatically picks up changes to the configuration" do
@@ -207,7 +207,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     @help.show_attribute 'fifth'
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "uses a custom name leader" do
@@ -230,7 +230,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     help.show_all
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
     str = <<-OUTPUT
@@ -241,7 +241,7 @@ describe Loquacious::Configuration::Help do
     | ## third.question => :symbol
     OUTPUT
     help.show_all :values => true, :descriptions => false
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "uses a custom name length" do
@@ -264,7 +264,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     help.show_all
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
     str = <<-OUTPUT
@@ -275,7 +275,7 @@ describe Loquacious::Configuration::Help do
     |  - thir...ion => :symbol
     OUTPUT
     help.show_all :values => true, :descriptions => false
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "uses a custom name/value separator" do
@@ -298,7 +298,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     help.show_all :values => true
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
 
     @sio.clear
     str = <<-OUTPUT
@@ -309,7 +309,7 @@ describe Loquacious::Configuration::Help do
     |  - third.question :: :symbol
     OUTPUT
     help.show_all :values => true, :descriptions => false
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 
   it "uses a custom description leader" do
@@ -352,7 +352,7 @@ describe Loquacious::Configuration::Help do
     |
     OUTPUT
     help.show_all :values => true
-    @sio.to_s.should == str.gutter!
+    @sio.to_s.should be == str.gutter!
   end
 end
 

@@ -11,11 +11,11 @@ describe Loquacious do
   end
 
   it "finds things releative to 'lib'" do
-    Loquacious.libpath(%w[loquacious config.rb]).should == File.join(@root_dir, %w[lib loquacious config.rb])
+    Loquacious.libpath(%w[loquacious config.rb]).should be == File.join(@root_dir, %w[lib loquacious config.rb])
   end
 
   it "finds things releative to 'root'" do
-    Loquacious.path('Rakefile').should == File.join(@root_dir, 'Rakefile')
+    Loquacious.path('Rakefile').should be == File.join(@root_dir, 'Rakefile')
   end
 
   describe "when copying configuration objects" do
@@ -31,10 +31,10 @@ describe Loquacious do
       copy.first = 'foobar'
       copy.second.bar = 'buz'
 
-      obj.first.should == 'foo'
-      obj.second.bar.should == 'baz'
-      copy.first.should == 'foobar'
-      copy.second.bar.should == 'buz'
+      obj.first.should be == 'foo'
+      obj.second.bar.should be == 'baz'
+      copy.first.should be == 'foobar'
+      copy.second.bar.should be == 'buz'
     end
 
     it "looks up a configuration object by name" do
@@ -46,8 +46,8 @@ describe Loquacious do
       }
 
       copy = Loquacious.copy('by name')
-      copy.first.should == 'foo'
-      copy.second.bar.should == 'baz'
+      copy.first.should be == 'foo'
+      copy.second.bar.should be == 'baz'
     end
 
     it "returns nil when a configuration object cannot be found" do
@@ -67,9 +67,9 @@ describe Loquacious do
         third "hey I'm new"
       }
 
-      copy.first.should == 'foo'
-      copy.second.bar.should == 'foobar'
-      copy.third.should == "hey I'm new"
+      copy.first.should be == 'foo'
+      copy.second.bar.should be == 'foobar'
+      copy.third.should be == "hey I'm new"
     end
   end
 end

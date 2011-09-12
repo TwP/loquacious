@@ -10,24 +10,24 @@ describe Loquacious::Configuration::Iterator do
 
   it 'should find a particular attribute' do
     node = @iterator.find 'first'
-    node.name.should == 'first'
-    node.key.should == :first
-    node.desc.should == 'foo method'
-    node.obj.should == 'foo'
-    node.config?.should == false
+    node.name.should be == 'first'
+    node.key.should be == :first
+    node.desc.should be == 'foo method'
+    node.obj.should be == 'foo'
+    node.config?.should be == false
 
     node = @iterator.find :third
-    node.name.should == 'third'
-    node.key.should == :third
-    node.desc.should == 'the third group'
-    node.config?.should == true
+    node.name.should be == 'third'
+    node.key.should be == :third
+    node.desc.should be == 'the third group'
+    node.config?.should be == true
 
     node = @iterator.find('third.answer')
-    node.name.should == 'third.answer'
-    node.key.should == :answer
-    node.desc.should == 'life the universe and everything'
-    node.obj.should == 42
-    node.config?.should == false
+    node.name.should be == 'third.answer'
+    node.key.should be == :answer
+    node.desc.should be == 'life the universe and everything'
+    node.obj.should be == 42
+    node.config?.should be == false
   end
 
   it 'should return nil for unknown attributes' do
@@ -41,17 +41,17 @@ describe Loquacious::Configuration::Iterator do
     ary = Array.new
     @iterator.each {|n| ary << n.name}
 
-    ary.should == %w{first second third third.answer third.question}
+    ary.should be == %w{first second third third.answer third.question}
   end
 
   it 'should iterate over nested attributes if given' do
     ary = Array.new
     @iterator.each('third') {|n| ary << n.name}
-    ary.should == %w{third third.answer third.question}
+    ary.should be == %w{third third.answer third.question}
 
     ary.clear
     @iterator.each('first') {|n| ary << n.name}
-    ary.should == %w{first}
+    ary.should be == %w{first}
 
     ary.clear
     @iterator.each('not_here') {|n| ary << n.name}
