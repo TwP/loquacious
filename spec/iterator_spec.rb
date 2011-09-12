@@ -57,6 +57,15 @@ describe Loquacious::Configuration::Iterator do
     @iterator.each('not_here') {|n| ary << n.name}
     ary.should be_empty
   end
+
+  it 'should ignore undefined nodes' do
+    @config.does_not_exist.foo  # this creates a Loquacious::Undefined node
+    @config.does_not_exist.kind_of?(::Loquacious::Undefined).should be_true
+
+    ary = Array.new
+    @iterator.each {|n| ary << n.name}
+    ary.should be == %w{first second third third.answer third.question}
+  end
 end
 
 # EOF
