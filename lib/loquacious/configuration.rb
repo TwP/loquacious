@@ -89,13 +89,21 @@ module Loquacious
       # Recursively convert a configuration object to a hash.
       #
       def to_hash( config )
-        hash = {}
+        cache = { nil => {} }
+
         Iterator.new(config).each do |node|
-          next if node.name =~ /\./
-          value = node.obj
-          hash[node.name.to_sym] = node.config? ? to_hash(value) : value
+          ary = node.name.split('.')
+          name = ary.pop.to_sym
+          parent = ary.empty? ? nil : ary.join('.')
+
+          if node.config?
+            cache[node.name] = cache[parent][name] = {}
+          else
+            cache[parent][name] = node.obj
+          end
         end
-        hash
+
+        return cache[nil]
       end
     end
 
@@ -263,7 +271,7 @@ module Loquacious
     # Recursively convert the configuration object to a hash.
     #
     def to_hash
-      Loquacious::Configuration.to_hash(self)
+      ::Loquacious::Configuration.to_hash(self)
     end
 
     # Implementation of a domain specific language for creating configuration
