@@ -16,13 +16,13 @@ describe Loquacious::Configuration::Help do
   it "returns a help object by name" do
     help = Loquacious::Configuration::Help.new 'specs'
     config = help.instance_variable_get(:@config)
-    config.should equal(@config)
+    config.equal?(@config).should be_true
   end
 
   it "returns a help object for a configuration" do
     help = Loquacious::Configuration::Help.new @config
     config = help.instance_variable_get(:@config)
-    config.should equal(@config)
+    config.equal?(@config).should be_true
   end
 
   it "raises an error for invalid attribute names" do
@@ -356,4 +356,3 @@ describe Loquacious::Configuration::Help do
   end
 end
 
-# EOF

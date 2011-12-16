@@ -31,10 +31,10 @@ describe Loquacious do
       copy.first = 'foobar'
       copy.second.bar = 'buz'
 
-      obj.first.should be == 'foo'
-      obj.second.bar.should be == 'baz'
-      copy.first.should be == 'foobar'
-      copy.second.bar.should be == 'buz'
+      obj.first.eql?('foo').should be_true
+      obj.second.bar.eql?('baz').should be_true
+      copy.first.eql?('foobar').should be_true
+      copy.second.bar.eql?('buz').should be_true
     end
 
     it "looks up a configuration object by name" do
@@ -46,12 +46,12 @@ describe Loquacious do
       }
 
       copy = Loquacious.copy('by name')
-      copy.first.should be == 'foo'
-      copy.second.bar.should be == 'baz'
+      copy.first.eql?('foo').should be_true
+      copy.second.bar.eql?('baz').should be_true
     end
 
     it "returns nil when a configuration object cannot be found" do
-      Loquacious.copy('does not exist').should be_nil
+      Loquacious.copy('does not exist').eql?(nil).should be_true
     end
 
     it "overrides options with a block" do
@@ -67,9 +67,9 @@ describe Loquacious do
         third "hey I'm new"
       }
 
-      copy.first.should be == 'foo'
-      copy.second.bar.should be == 'foobar'
-      copy.third.should be == "hey I'm new"
+      copy.first.eql?('foo').should be_true
+      copy.second.bar.eql?('foobar').should be_true
+      copy.third.eql?("hey I'm new").should be_true
     end
   end
 end

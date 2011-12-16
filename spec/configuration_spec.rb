@@ -11,27 +11,27 @@ describe Loquacious::Configuration do
             first    'foo'
             second   'bar'
           }
-    obj.first.should be == 'foo'
-    obj.second.should be == 'bar'
-    obj.third.should be_nil
+    obj.first.eql?('foo').should be_true
+    obj.second.eql?('bar').should be_true
+    obj.third.kind_of?(Loquacious::Undefined).should be_true
   end
 
   it 'should respond to any method' do
-    @obj.first.should be_nil
+    @obj.first.kind_of?(Loquacious::Undefined).should be_true
     @obj.first = 'foo'
-    @obj.first.should be == 'foo'
+    @obj.first.eql?('foo').should be_true
 
     @obj.second = 'bar'
-    @obj.second.should be == 'bar'
+    @obj.second.eql?('bar').should be_true
   end
 
   it 'should deine attribute accessors when first used' do
-    @obj.respond_to?(:foo).should be == false
-    @obj.respond_to?(:foo=).should be == false
+    @obj.respond_to?(:foo).should be_false
+    @obj.respond_to?(:foo=).should be_false
 
     @obj.foo
-    @obj.respond_to?(:foo).should be == true
-    @obj.respond_to?(:foo=).should be == true
+    @obj.respond_to?(:foo).should be_true
+    @obj.respond_to?(:foo=).should be_true
   end
 
   it 'should provide a hash object for storing method descriptions' do
@@ -43,7 +43,7 @@ describe Loquacious::Configuration do
     cfg = Loquacious::Configuration.new {
             hash({:one => 1})
           }
-    cfg.hash.should be == {:one => 1}
+    cfg.hash.eql?({:one => 1}).should be_true
   end
 
   it 'should provide hash accessor notation for attributes' do
@@ -53,17 +53,17 @@ describe Loquacious::Configuration do
             three 3
           }
 
-    cfg['one'].should be == 1
-    cfg[:two].should be == 2
-    cfg['three'].should be == 3
+    cfg['one'].eql?(1).should be_true
+    cfg[:two].eql?(2).should be_true
+    cfg['three'].eql?(3).should be_true
 
-    cfg[:four].should be_nil
+    cfg[:four].kind_of?(Loquacious::Undefined).should be_true
     cfg.four = 4
-    cfg[:four].should be == 4
+    cfg[:four].eql?(4).should be_true
 
     cfg[:five] = 5
-    cfg.five.should be == 5
-    cfg[:five].should be == 5
+    cfg.five.eql?(5).should be_true
+    cfg[:five].eql?(5).should be_true
   end
 
   it 'should allow Kernel methods to be treated as configuration attributes' do
@@ -74,20 +74,20 @@ describe Loquacious::Configuration do
             puts   'not what you think'
           }
 
-    cfg['fork'].should be == 'spoon knife spork'
-    cfg['split'].should be == 'join'
-    cfg['raise'].should be == 'double down'
-    cfg['puts'].should be == 'not what you think'
+    cfg['fork'].eql?('spoon knife spork').should be_true
+    cfg['split'].eql?('join').should be_true
+    cfg['raise'].eql?('double down').should be_true
+    cfg['puts'].eql?('not what you think').should be_true
 
-    cfg[:fork].should be == 'spoon knife spork'
-    cfg[:split].should be == 'join'
-    cfg[:raise].should be == 'double down'
-    cfg[:puts].should be == 'not what you think'
+    cfg[:fork].eql?('spoon knife spork').should be_true
+    cfg[:split].eql?('join').should be_true
+    cfg[:raise].eql?('double down').should be_true
+    cfg[:puts].eql?('not what you think').should be_true
 
-    cfg.fork.should be == 'spoon knife spork'
-    cfg.split.should be == 'join'
-    cfg.raise.should be == 'double down'
-    cfg.puts.should be == 'not what you think'
+    cfg.fork.eql?('spoon knife spork').should be_true
+    cfg.split.eql?('join').should be_true
+    cfg.raise.eql?('double down').should be_true
+    cfg.puts.eql?('not what you think').should be_true
   end
 
   it 'should not be affected by loading other modules like timeout' do
@@ -98,9 +98,9 @@ describe Loquacious::Configuration do
             foo      'bar'
             baz      'buz'
           }
-    cfg.timeout.should be == 10
-    cfg.foo.should be == 'bar'
-    cfg.baz.should be == 'buz'
+    cfg.timeout.eql?(10).should be_true
+    cfg.foo.eql?('bar').should be_true
+    cfg.baz.eql?('buz').should be_true
   end
 
   it 'should evaluate Proc objects when fetching values' do
@@ -110,14 +110,14 @@ describe Loquacious::Configuration do
           }
 
     obj.third = Proc.new { obj.first + obj.second }
-    obj.third.should be == 'foobar'
+    obj.third.eql?('foobar').should be_true
 
     obj.second = 'baz'
-    obj.third.should be == 'foobaz'
+    obj.third.eql?('foobaz').should be_true
 
     obj.first = 'Hello '
     obj.second = 'World!'
-    obj.third.should be == 'Hello World!'
+    obj.third.eql?('Hello World!').should be_true
   end
 
   it 'should return a value when evaluating inside the DSL' do
@@ -128,16 +128,16 @@ describe Loquacious::Configuration do
             }
           }
 
-    obj.first.should be == 'foo'
-    obj.second.bar.should be_nil
+    obj.first.eql?('foo').should be_true
+    obj.second.bar.eql?(nil).should be_true
 
     Loquacious::Configuration::DSL.evaluate(:config => obj) {
       first 'bar'
       second.bar 'no longer nil'
     }
 
-    obj.first.should be == 'bar'
-    obj.second.bar.should be == 'no longer nil'
+    obj.first.eql?('bar').should be_true
+    obj.second.bar.eql?('no longer nil').should be_true
   end
 
   it 'should not delete descriptions' do
@@ -150,8 +150,8 @@ describe Loquacious::Configuration do
             }
           }
 
-    obj.first.should be == 'foo'
-    obj.second.bar.should be_nil
+    obj.first.eql?('foo').should be_true
+    obj.second.bar.eql?(nil).should be_true
 
     obj.__desc[:first].should be == 'the first value'
     obj.__desc[:second].should be == 'the second value'
@@ -162,8 +162,8 @@ describe Loquacious::Configuration do
       second.bar 'no longer nil'
     }
 
-    obj.first.should be == 'bar'
-    obj.second.bar.should be == 'no longer nil'
+    obj.first.eql?('bar').should be_true
+    obj.second.bar.eql?('no longer nil').should be_true
 
     obj.__desc[:first].should be == 'the first value'
     obj.__desc[:second].should be == 'the second value'
@@ -172,6 +172,9 @@ describe Loquacious::Configuration do
 
   # -----------------------------------------------------------------------
   describe 'when merging' do
+    before :each do
+      Loquacious::Configuration.instance_variable_get(:@table).clear
+    end
 
     it 'should merge the contents of another Configuration' do
       other = Loquacious::Configuration.new  {
@@ -179,13 +182,13 @@ describe Loquacious::Configuration do
                 second  'bar', :desc => 'bar method'
               }
 
-      @obj.first.should be_nil
-      @obj.second.should be_nil
+      @obj.first.kind_of?(Loquacious::Undefined).should be_true
+      @obj.second.kind_of?(Loquacious::Undefined).should be_true
       @obj.__desc.should be == {:first => nil, :second => nil}
 
       @obj.merge! other
-      @obj.first.should be == 'foo'
-      @obj.second.should be == 'bar'
+      @obj.first.eql?('foo').should be_true
+      @obj.second.eql?('bar').should be_true
       @obj.__desc.should be == {
         :first => 'foo method',
         :second => 'bar method'
@@ -211,10 +214,10 @@ describe Loquacious::Configuration do
 
       @obj.merge! other
 
-      @obj.first.should be == 'foo'
-      @obj.second.should be == 'bar'
-      @obj.third.question.should be == '?'
-      @obj.third.answer.should be == 42
+      @obj.first.eql?('foo').should be_true
+      @obj.second.eql?('bar').should be_true
+      @obj.third.question.eql?('?').should be_true
+      @obj.third.answer.eql?(42).should be_true
 
       @obj.__desc.should be == {
         :first => 'foo method',
@@ -289,14 +292,14 @@ describe Loquacious::Configuration do
       }
 
       c = Loquacious::Configuration.for 'test'
-      c.first.should be == 'foo'
-      c.second.bar.should be_nil
+      c.first.eql?('foo').should be_true
+      c.second.bar.eql?(nil).should be_true
     end
 
     it 'does not overwrite existing configuration values' do
       c = Loquacious::Configuration.for('test') {
             first 1
-            thrid 3
+            third 3
           }
 
       Loquacious::Configuration.defaults_for('test') {
@@ -307,14 +310,14 @@ describe Loquacious::Configuration do
         }
       }
 
-      c.first.should be == 1
-      c.third.should be == 3
-      c.second.bar.should be_nil
+      c.first.eql?(1).should be_true
+      c.third.eql?(3).should be_true
+      c.second.bar.eql?(nil).should be_true
 
       c.__desc[:first].should be == 'the first value'
       c.__desc[:second].should be == 'the second value'
       c.second.__desc[:bar].should be == 'time to go drinking'
-      c.__desc[:thrid].should be_nil
+      c.__desc[:third].should be_nil
     end
 
     it 'does not overwrite nested configuration values' do
@@ -327,7 +330,7 @@ describe Loquacious::Configuration do
                 boo 'who'
               }
             }
-            thrid 3
+            third 3
           }
 
       Loquacious::Configuration.defaults_for('test') {
@@ -343,14 +346,14 @@ describe Loquacious::Configuration do
         }
       }
 
-      c.first.should be == 1
-      c.third.should be == 3
-      c.second.bar.should be == 'pub'
-      c.second.baz.buz.should be == 'random text'
-      c.second.baz.boo.should be == 'who'
+      c.first.eql?(1).should be_true
+      c.third.eql?(3).should be_true
+      c.second.bar.eql?('pub').should be_true
+      c.second.baz.buz.eql?('random text').should be_true
+      c.second.baz.boo.eql?('who').should be_true
 
       c.second.bar = Loquacious::Undefined.new('second.bar')
-      c.second.bar.should be == 'h-bar'
+      c.second.bar.eql?('h-bar').should be_true
 
       c.__desc[:first].should be == 'the first value'
       c.__desc[:second].should be == 'the second value'
@@ -358,7 +361,7 @@ describe Loquacious::Configuration do
       c.second.__desc[:baz].should be == 'getting weird'
       c.second.baz.__desc[:buz].should be == 'post drinking feeling'
       c.second.baz.__desc[:boo].should be == 'no need to cry about it'
-      c.__desc[:thrid].should be_nil
+      c.__desc[:third].should be_nil
     end
 
     it 'supports differing default type' do
@@ -372,7 +375,7 @@ describe Loquacious::Configuration do
                 boo 'who'
               }
             }
-            thrid 3
+            third 3
           }
 
       Loquacious::Configuration.defaults_for('test') {
@@ -384,11 +387,11 @@ describe Loquacious::Configuration do
         }
       }
 
-      c.second.baz.buz.should be == 'random text'
-      c.second.baz.boo.should be == 'who'
+      c.second.baz.buz.eql?('random text').should be_true
+      c.second.baz.boo.eql?('who').should be_true
 
       c.second.baz = Loquacious::Undefined.new('second.bar')
-      c.second.baz.should be_nil
+      c.second.baz.eql?(nil).should be_true
       c.second.__desc[:baz].should be == 'deprecated'
     end
 
@@ -398,7 +401,7 @@ describe Loquacious::Configuration do
             second {
               bar 'pub'
             }
-            thrid 3
+            third 3
           }
 
       Loquacious::Configuration.defaults_for('test') {
@@ -410,7 +413,7 @@ describe Loquacious::Configuration do
         }
       }
 
-      c.second.baz.should be == 36
+      c.second.baz.eql?(36).should be_true
       c.second.__desc[:baz].should be == 'proc will be evaluated'
     end
   end
