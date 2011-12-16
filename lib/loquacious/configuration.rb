@@ -231,7 +231,7 @@ module Loquacious
         if value.kind_of?(Configuration) and other_value.kind_of?(Configuration)
           value.merge! other_value
         elsif !other_value.kind_of?(Loquacious::Undefined)
-          @__values[key] = other_value
+          self.__send__(key, other_value)
         end
 
         if other_defaults.has_key? key
