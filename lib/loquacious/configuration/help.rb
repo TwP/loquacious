@@ -246,4 +246,3 @@ class Loquacious::Configuration
   end  # class Help
 end  # module Loquacious
 
-# EOF

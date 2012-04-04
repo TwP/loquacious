@@ -144,13 +144,12 @@ module Loquacious
     end
 
   end  # class << self
-end  # module Loquacious
 
-Loquacious.libpath {
-  require 'loquacious/core_ext/string'
-  require 'loquacious/undefined'
-  require 'loquacious/configuration'
-  require 'loquacious/configuration/iterator'
-  require 'loquacious/configuration/help'
-}
+  require libpath('loquacious/core_ext/string')
+  require libpath('loquacious/undefined')
+  require libpath('loquacious/configuration')
+  require libpath('loquacious/configuration/iterator')
+  require libpath('loquacious/configuration/help')
+
+end  # module Loquacious
 
