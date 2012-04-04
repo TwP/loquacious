@@ -14,10 +14,11 @@ Bones {
   email        'tim.pease@gmail.com'
   url          'http://rubygems.org/gems/loquacious'
   readme_file  'README.rdoc'
-  spec.opts << '--color'
+
+  spec.opts << '--color' << '--format documentation'
   use_gmail
 
-  depend_on 'rspec', '~> 2.6', :development => true
+  depend_on 'rspec', '~> 2.9', :development => true
 }
 
 task 'ann:prereqs' do
