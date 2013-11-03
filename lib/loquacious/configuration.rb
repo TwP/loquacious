@@ -36,9 +36,7 @@ module Loquacious
       # configuration; i.e. the configurations are additive.
       #
       def for( name, &block )
-        if block.nil?
-          return @table.has_key?(name) ? @table[name] : nil
-        end
+        return @table.fetch(name, nil) if block.nil?
 
         if @table.has_key? name
           DSL.evaluate(:config => @table[name], &block)
@@ -314,7 +312,7 @@ module Loquacious
       def initialize( opts = {}, &block )
         @description = nil
         @__config = opts[:config] || Configuration.new
-        @__config.__defaults_mode = opts.key?(:defaults_mode) ? opts[:defaults_mode] : false
+        @__config.__defaults_mode = opts.fetch(:defaults_mode, false)
         instance_eval(&block)
       ensure
         @__config.__defaults_mode = false
